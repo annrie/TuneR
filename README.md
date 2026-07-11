@@ -1,0 +1,62 @@
+<p align="center">
+  <img src="src-tauri/icons/128x128.png" alt="TuneR ロゴ" width="128" height="128" />
+</p>
+
+<h1 align="center">TuneR</h1>
+
+<p align="center">
+  Tauri v2 + Vue 3 で作られた、macOS / iOS 向けインターネットラジオアプリ<br>
+  <sub>大文字の R は Radio の R</sub>
+</p>
+
+---
+
+## 特徴
+
+- 🌍 **世界中のラジオ局** — [Radio Browser API](https://www.radio-browser.info/) から国別・キーワードで検索
+- 🎵 **今流れている曲名を表示** — ICY メタデータをリアルタイム取得（CORS 非対応局は Rust 側でフォールバック取得）
+- 🔒 **ロック画面 / コントロールセンター対応** — Media Session 連携で曲名・局名・ロゴを表示、再生操作も可能
+- 🪟 **ミニプレイヤー** — 常に手前に表示されるコンパクトなリモコンウィンドウ（macOS、`⌘⇧M`）
+- ⭐ **お気に入り** — ワンクリックで登録、ページネーション付き一覧
+- 🌗 **ダークモード** — システム連動 / 手動切替
+- 🌐 **8言語対応** — 日本語・英語・ドイツ語・スペイン語・フランス語・韓国語・ポルトガル語(ブラジル)・中国語(繁体)
+- 📱 **iPhone / iPad 対応** — バックグラウンド再生・ロック中の再生継続
+
+## 技術スタック
+
+| 分野 | 技術 |
+|------|------|
+| フレームワーク | [Tauri v2](https://tauri.app/) (Rust) + [Vue 3](https://vuejs.org/) (Composition API) |
+| ビルド | Vite 7 + TypeScript |
+| 状態管理 | Pinia |
+| UI | Tailwind CSS v4 + Headless UI + unplugin-icons (Heroicons) |
+| 国際化 | vue-i18n |
+| 音声 | HTML5 Audio + IcecastMetadataPlayer + Rust (reqwest) フォールバック |
+
+## 開発
+
+```bash
+pnpm install
+
+# デスクトップ (macOS)
+pnpm tauri dev
+
+# iOS シミュレータ / 実機
+pnpm tauri ios dev --host
+```
+
+## ビルド
+
+```bash
+# macOS ユニバーサルバイナリ (Intel + Apple Silicon)
+pnpm tauri build --target universal-apple-darwin
+
+# iOS (要 Apple Developer 署名)
+pnpm tauri ios build
+```
+
+## Rust ユニットテスト
+
+```bash
+cd src-tauri && cargo test --lib
+```
