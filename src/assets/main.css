@@ -1,0 +1,36 @@
+@import "tailwindcss";
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+@theme {
+  --color-primary-50:  oklch(0.971 0.013 142);
+  --color-primary-100: oklch(0.946 0.029 142);
+  --color-primary-200: oklch(0.894 0.063 142);
+  --color-primary-300: oklch(0.829 0.110 142);
+  --color-primary-400: oklch(0.747 0.158 142);
+  --color-primary-500: oklch(0.673 0.181 142);
+  --color-primary-600: oklch(0.581 0.166 142);
+  --color-primary-700: oklch(0.478 0.139 142);
+  --color-primary-800: oklch(0.388 0.114 142);
+  --color-primary-900: oklch(0.319 0.092 142);
+  --color-primary-950: oklch(0.218 0.071 142);
+}
+
+/* select のドロップダウンやスクロールバー等、OSが描くネイティブ部品の配色を
+   Tailwind の dark クラスと同期させる（未指定だとダークモードでも白いままになる） */
+html {
+  color-scheme: light;
+}
+html.dark {
+  color-scheme: dark;
+}
+
+html, body {
+  margin: 0;
+  padding: 0;
+  font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
+
+#app {
+  min-height: 100vh;
+}

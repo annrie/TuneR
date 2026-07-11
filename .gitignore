@@ -1,0 +1,40 @@
+node_modules
+dist
+dist-ssr
+*.local
+.DS_Store
+
+# Editor
+.vscode/*
+!.vscode/extensions.json
+.idea
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Vite
+src/components.d.ts
+
+# Tauri
+src-tauri/target
+# gen/apple はコミット対象（iOS の Info.plist・Xcode プロジェクトを含む）。
+# ビルド成果物と CocoaPods だけ除外する。
+src-tauri/gen/apple/build
+src-tauri/gen/apple/Pods
+src-tauri/gen/apple/Externals
+
+# セッションメモ・一時ファイル
+.remember
+.claude
+dev.txt
+iosError.txt

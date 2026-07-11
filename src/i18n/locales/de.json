@@ -1,0 +1,19 @@
+{
+  "app_name": "TuneR",
+  "search": "Suchen",
+  "search_placeholder": "Nach Stichwort suchen...",
+  "favorites": "Favoriten",
+  "home": "Startseite",
+  "playing": "Spielt",
+  "stopped": "Gestoppt",
+  "add_favorite": "Zu Favoriten hinzufügen",
+  "remove_favorite": "Aus Favoriten entfernen",
+  "no_results": "Keine Ergebnisse gefunden",
+  "country": "Land",
+  "language": "Sprache",
+  "tags": "Tags",
+  "play": "Abspielen",
+  "pause": "Pause",
+  "station_homepage": "Sender-Website",
+  "station_timetable": "Programmübersicht"
+}

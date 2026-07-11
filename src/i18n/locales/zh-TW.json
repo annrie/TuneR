@@ -1,0 +1,19 @@
+{
+  "app_name": "TuneR",
+  "search": "搜尋",
+  "search_placeholder": "透過關鍵字搜尋...",
+  "favorites": "最愛",
+  "home": "首頁",
+  "playing": "正在播放",
+  "stopped": "已停止",
+  "add_favorite": "加入最愛",
+  "remove_favorite": "移除最愛",
+  "no_results": "找不到結果",
+  "country": "國家",
+  "language": "語言",
+  "tags": "標籤",
+  "play": "播放",
+  "pause": "暫停",
+  "station_homepage": "電台官網",
+  "station_timetable": "節目表"
+}

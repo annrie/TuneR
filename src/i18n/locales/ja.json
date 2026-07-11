@@ -1,0 +1,19 @@
+{
+  "app_name": "TuneR",
+  "search": "検索",
+  "search_placeholder": "キーワードで検索...",
+  "favorites": "お気に入り",
+  "home": "ホーム",
+  "playing": "再生中",
+  "stopped": "停止",
+  "add_favorite": "お気に入りに追加",
+  "remove_favorite": "お気に入りから削除",
+  "no_results": "見つかりませんでした",
+  "country": "国",
+  "language": "言語",
+  "tags": "タグ",
+  "play": "再生",
+  "pause": "一時停止",
+  "station_homepage": "局のホームページ",
+  "station_timetable": "タイムテーブル"
+}

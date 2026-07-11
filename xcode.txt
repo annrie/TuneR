@@ -1,0 +1,21 @@
+/debug-iphonesimulator/TuneR.app -shallow-bundle -infoplist-subpath Info.plist
+
+** BUILD SUCCEEDED **
+
+Archiving app...
+2026-05-21 21:12:45.150 xcodebuild[74178:21720222] [MT] DVTAssertions: Warning in IDEFrameworks/IDEFoundation/Execution/RunDestinations/IDERunDestinationManager.m:1085
+Details:  There are multiple run destinations that support deployment for the current scheme; selecting anyObject: (
+    "<IDERunDestination:'Any iOS Device' sdk:iphoneos26.2 variant:iphoneos arch:undefined_arch>",
+    "<IDERunDestination:'Any iOS Simulator Device' sdk:iphonesimulator26.2 variant:iphonesimulator arch:undefined_arch>"
+)
+Object:   <IDERunDestinationManager: 0x60000356d0f0>
+Method:   -genericRunDestinationForRunDestination:scheme:schemeCommands:executionEnvironment:requiresSupportsArchiving:requiresDeploymentPlatformMatches:allowMultipleRunDestinationMatches:allowNoRunDestinationMatches:error:
+Thread:   <_NSMainThread: 0x600002228080>{number = 1, name = main}
+Please file a bug at https://feedbackassistant.apple.com with this warning message and any useful information you can provide.
+/Volumes/Logitec2/work/TuneR/src-tauri/gen/apple/tuner.xcodeproj: error: Signing for "tuner_iOS" requires a development team. Select a development team in the Signing & Capabilities editor. (in target 'tuner_iOS' from project 'tuner')
+warning: None of the architectures in ARCHS (x86_64) are valid. Consider setting ARCHS to $(ARCHS_STANDARD) or updating it to include at least one value from VALID_ARCHS (arm64, x86_64) which is not in EXCLUDED_ARCHS (x86_64). (in target 'tuner_iOS' from project 'tuner')
+note: Run script build phase 'Build Rust Code' will be run during every build because the option to run the script phase "Based on dependency analysis" is unchecked. (in target 'tuner_iOS' from project 'tuner')
+** ARCHIVE FAILED **
+
+failed to run iOS app: Failed to archive via `xcodebuild`: command ["xcodebuild"] exited with code 65
+       Error failed to run iOS app: Failed to archive via `xcodebuild`: command ["xcodebuild"] exited with code 65
