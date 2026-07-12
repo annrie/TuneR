@@ -125,3 +125,9 @@ TuneR/
 | 曲名が先頭数文字で切れる | ICYの`StreamTitle`はエスケープ機構がなく、曲名内のアポストロフィ（`You're`等）で誤終端 | パーサは `';` 終端を優先（`lib.rs` の `parse_stream_title`、ユニットテストあり） |
 | iOS実機でJS/曲名まわりを検証したい | ブラウザでdev URLを開いてもRust（invoke）が無い別環境になり検証にならない | 必ずアプリ本体で確認。Mac Safariの「開発」メニュー → 実機 → TuneRのWebViewでコンソールを見る |
 | `devicectl ... exited with code 1` で実機起動失敗 | iPhoneがロック中、または開発者未信頼 | ロック解除して再実行。初回は 設定→一般→VPNとデバイス管理 で開発者を「信頼」 |
+| 旧iOS(15等)でprimary色が透明になる | oklchの明度の小数表記はWebKit 16.4未満でパース不可 | `main.css` は**パーセント表記**（`oklch(67.3% …)`）を維持する |
+| 旧iOSでレスポンシブ(`md:`等)が全滅 | Tailwind v4の範囲記法 `@media (width >= …)` は WebKit 16.4未満で無効 | `@csstools/postcss-media-minmax` で旧記法に変換（vite.config.ts設定済み） |
+| 実機dev中にコード変更が反映されない | HMRのWebSocketがlocalhost固定で実機から届かない | `hmr.host` は `TAURI_DEV_HOST` を優先（vite.config.ts設定済み）。修正前のセッションはアプリ再起動で反映 |
+| Xcode GUIから▶で `pnpm: command not found` | GUI起動のXcodeはターミナルのPATHを継がない | ビルドスクリプト先頭でPATHをexport（project.yml/pbxproj設定済み） |
+| iOS 15実機(旧iPad等)へのデプロイ | Tauri CLIはCoreDevice(iOS 17+)しか列挙しない | `pnpm tauri ios dev --open --host` でXcodeを開き、実行先に実機を選んで▶ |
+| iOSで音量スライダーが効かない | iOS/iPadOSは `audio.volume` への書き込みをOS仕様で無視 | 仕様。音量は本体ボタンで調整（iOSでは音量UI非表示が望ましい・将来課題） |
