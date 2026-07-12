@@ -2,18 +2,20 @@
 
 @custom-variant dark (&:where(.dark, .dark *));
 
+/* 明度はパーセント表記にすること。小数表記（oklch(0.673 …)）は
+   WebKit 16.4未満（iOS 15等）でパースできず、色が透明に落ちる。 */
 @theme {
-  --color-primary-50:  oklch(0.971 0.013 142);
-  --color-primary-100: oklch(0.946 0.029 142);
-  --color-primary-200: oklch(0.894 0.063 142);
-  --color-primary-300: oklch(0.829 0.110 142);
-  --color-primary-400: oklch(0.747 0.158 142);
-  --color-primary-500: oklch(0.673 0.181 142);
-  --color-primary-600: oklch(0.581 0.166 142);
-  --color-primary-700: oklch(0.478 0.139 142);
-  --color-primary-800: oklch(0.388 0.114 142);
-  --color-primary-900: oklch(0.319 0.092 142);
-  --color-primary-950: oklch(0.218 0.071 142);
+  --color-primary-50:  oklch(97.1% 0.013 142);
+  --color-primary-100: oklch(94.6% 0.029 142);
+  --color-primary-200: oklch(89.4% 0.063 142);
+  --color-primary-300: oklch(82.9% 0.110 142);
+  --color-primary-400: oklch(74.7% 0.158 142);
+  --color-primary-500: oklch(67.3% 0.181 142);
+  --color-primary-600: oklch(58.1% 0.166 142);
+  --color-primary-700: oklch(47.8% 0.139 142);
+  --color-primary-800: oklch(38.8% 0.114 142);
+  --color-primary-900: oklch(31.9% 0.092 142);
+  --color-primary-950: oklch(21.8% 0.071 142);
 }
 
 /* select のドロップダウンやスクロールバー等、OSが描くネイティブ部品の配色を

@@ -4,7 +4,11 @@ import tailwindcss from '@tailwindcss/vite'
 import Icons from 'unplugin-icons/vite'
 import Components from 'unplugin-vue-components/vite'
 import IconsResolver from 'unplugin-icons/resolver'
+import postcssMediaMinmax from '@csstools/postcss-media-minmax'
 import { fileURLToPath, URL } from 'node:url'
+
+// tauri dev --host 実行時に Tauri CLI が設定する（実機のWebViewが接続してくるLAN IP）
+const tauriDevHost = process.env.TAURI_DEV_HOST
 
 // https://vitejs.dev/config/
 export default defineConfig(async () => ({
@@ -29,6 +33,16 @@ export default defineConfig(async () => ({
       '@': fileURLToPath(new URL('./src', import.meta.url)),
     },
   },
+  css: {
+    postcss: {
+      plugins: [
+        // Tailwind v4 が出力する範囲記法 @media (width >= 48rem) を
+        // 旧記法 (min-width: 48rem) に変換する。範囲記法は WebKit 16.4 未満
+        // （iOS 15 等）で解釈されず、レスポンシブ指定が全滅するため。
+        postcssMediaMinmax(),
+      ],
+    },
+  },
   // prevent vite from obscuring rust errors
   clearScreen: false,
   // Tauri expects a fixed port, fail if that port is not available
@@ -38,7 +52,9 @@ export default defineConfig(async () => ({
     host: '0.0.0.0',
     hmr: {
       protocol: 'ws',
-      host: 'localhost',
+      // localhost 固定だと実機(iPhone/iPad)からHMRのWebSocketが繋がらず、
+      // コード変更が反映されない（アプリ再起動が必要になる）
+      host: tauriDevHost || 'localhost',
       port: 3001,
     },
   },
