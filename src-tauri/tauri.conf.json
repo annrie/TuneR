@@ -33,6 +33,9 @@
     ],
     "macOS": {
       "infoPlist": "Info.plist"
+    },
+    "iOS": {
+      "developmentTeam": "HZTPA767R3"
     }
   }
 }

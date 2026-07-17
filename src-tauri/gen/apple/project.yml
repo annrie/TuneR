@@ -30,7 +30,11 @@ targets:
     sources:
       - path: Sources
       - path: Assets.xcassets
+      # libapp.a(Rust成果物)はリンカがLIBRARY_SEARCH_PATHSで参照する。
+      # buildPhase指定なしだとリソースとして全archコピーされ
+      # 「Multiple commands produce libapp.a」でビルドが壊れる
       - path: Externals
+        buildPhase: none
       - path: tuner_iOS
       - path: assets
         buildPhase: resources
@@ -52,6 +56,12 @@ targets:
           - UIInterfaceOrientationLandscapeLeft
           - UIInterfaceOrientationLandscapeRight
         CFBundleShortVersionString: 0.1.0
+        # 非HTTPSのラジオ局ストリームを再生するため(Xcode GUIで追加されて
+        # いたものをproject.ymlに恒久化。xcodegen再生成で消えるのを防ぐ)
+        NSAppTransportSecurity:
+          NSAllowsArbitraryLoads: true
+        # バックグラウンド再生
+        UIBackgroundModes: [audio]
         CFBundleVersion: "0.1.0"
     entitlements:
       path: tuner_iOS/tuner_iOS.entitlements
@@ -61,6 +71,7 @@ targets:
         RUST_LOG: info
     settings:
       base:
+        DEVELOPMENT_TEAM: HZTPA767R3
         ENABLE_BITCODE: false
         ARCHS: [arm64, x86_64]
         VALID_ARCHS: arm64  x86_64 
