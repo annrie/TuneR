@@ -1,6 +1,24 @@
 # Changelog
 
 
+## v0.2.0
+
+[compare changes](https://github.com/annrie/TuneR/compare/v0.1.1...v0.2.0)
+
+### 🐛 バグ修正
+
+- **ios:** 🐛 署名チームを設定しiOSビルドの署名エラーを解消 ([736e926](https://github.com/annrie/TuneR/commit/736e926))
+- **ios:** 🐛 Externalsをリンク専用にしlibapp.aの重複コピーを解消 ([0bd93f1](https://github.com/annrie/TuneR/commit/0bd93f1))
+
+### 📦 ビルド
+
+- **deps:** ⬆️ vite 8世代へメジャー移行 ([db58c54](https://github.com/annrie/TuneR/commit/db58c54))
+- **deps:** 🔧 obug@2.1.4をminimumReleaseAgeExcludeに追加 ([c0e19be](https://github.com/annrie/TuneR/commit/c0e19be))
+
+### ❤️ Contributors
+
+- Annrie ([@annrie](https://github.com/annrie))
+
 ## v0.1.1
 
 [compare changes](https://github.com/annrie/TuneR/compare/v0.1.0...v0.1.1)
