@@ -1,2 +1,6 @@
 allowBuilds:
   esbuild: true
+minimumReleaseAgeExclude:
+  # sxzz(unpluginコア)によるdebugのESMフォーク。unplugin-icons 23 /
+  # unplugin-vue-components 32の依存。2.1.4のみ公開24h未満のため個別許可
+  - obug@2.1.4
