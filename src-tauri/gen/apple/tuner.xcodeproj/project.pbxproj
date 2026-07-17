@@ -14,13 +14,11 @@
 		442EB593EE41A5A802485C8E /* assets in Resources */ = {isa = PBXBuildFile; fileRef = 63AB4E392CFAD8C4C314B0D3 /* assets */; };
 		4643F80031AC3065804376BA /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FE66E1168303F423F4BCBD97 /* CoreGraphics.framework */; };
 		549DF80EBFD01A4B9E5CE388 /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4B15E85CC028EC7B8477D0FC /* Security.framework */; };
-		6068536F902B58D87D406738 /* libapp.a in Resources */ = {isa = PBXBuildFile; fileRef = 166EABB0F384D68695A9B829 /* libapp.a */; };
 		63186A73321F4D0DA434EA00 /* WebKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7BD30C8803DE05BE67B744A5 /* WebKit.framework */; };
 		654D96BF2CBA8F745F38F617 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 1DBF7F83BAC8E017C61FBDF2 /* LaunchScreen.storyboard */; };
 		7365010715F4262833AA6E8F /* main.mm in Sources */ = {isa = PBXBuildFile; fileRef = E01A8DB8E6DCB54BACB0C632 /* main.mm */; };
 		751513AECD85069FD42F1279 /* libapp.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 691A321145FF2B54DBCE8FC4 /* libapp.a */; };
 		B02863E4AA0F8D9D677E1B97 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = ABB246DCC665A4179ACABB3D /* UIKit.framework */; };
-		FCAECA92C70C1F0333B7F284 /* libapp.a in Resources */ = {isa = PBXBuildFile; fileRef = AE67FF17D1C7B4947CA3AD87 /* libapp.a */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -252,8 +250,6 @@
 				0B4B185CF3246A046B7DEAFA /* Assets.xcassets in Resources */,
 				654D96BF2CBA8F745F38F617 /* LaunchScreen.storyboard in Resources */,
 				442EB593EE41A5A802485C8E /* assets in Resources */,
-				6068536F902B58D87D406738 /* libapp.a in Resources */,
-				FCAECA92C70C1F0333B7F284 /* libapp.a in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

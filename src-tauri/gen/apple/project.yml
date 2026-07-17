@@ -30,7 +30,11 @@ targets:
     sources:
       - path: Sources
       - path: Assets.xcassets
+      # libapp.a(Rust成果物)はリンカがLIBRARY_SEARCH_PATHSで参照する。
+      # buildPhase指定なしだとリソースとして全archコピーされ
+      # 「Multiple commands produce libapp.a」でビルドが壊れる
       - path: Externals
+        buildPhase: none
       - path: tuner_iOS
       - path: assets
         buildPhase: resources
