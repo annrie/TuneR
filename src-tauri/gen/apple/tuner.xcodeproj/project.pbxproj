@@ -14,27 +14,31 @@
 		442EB593EE41A5A802485C8E /* assets in Resources */ = {isa = PBXBuildFile; fileRef = 63AB4E392CFAD8C4C314B0D3 /* assets */; };
 		4643F80031AC3065804376BA /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FE66E1168303F423F4BCBD97 /* CoreGraphics.framework */; };
 		549DF80EBFD01A4B9E5CE388 /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4B15E85CC028EC7B8477D0FC /* Security.framework */; };
+		6068536F902B58D87D406738 /* libapp.a in Resources */ = {isa = PBXBuildFile; fileRef = 166EABB0F384D68695A9B829 /* libapp.a */; };
 		63186A73321F4D0DA434EA00 /* WebKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7BD30C8803DE05BE67B744A5 /* WebKit.framework */; };
 		654D96BF2CBA8F745F38F617 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 1DBF7F83BAC8E017C61FBDF2 /* LaunchScreen.storyboard */; };
 		7365010715F4262833AA6E8F /* main.mm in Sources */ = {isa = PBXBuildFile; fileRef = E01A8DB8E6DCB54BACB0C632 /* main.mm */; };
 		751513AECD85069FD42F1279 /* libapp.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 691A321145FF2B54DBCE8FC4 /* libapp.a */; };
 		B02863E4AA0F8D9D677E1B97 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = ABB246DCC665A4179ACABB3D /* UIKit.framework */; };
+		FCAECA92C70C1F0333B7F284 /* libapp.a in Resources */ = {isa = PBXBuildFile; fileRef = AE67FF17D1C7B4947CA3AD87 /* libapp.a */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		0FEB9F297C2351939D248D9D /* TuneR.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = TuneR.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		0FEB9F297C2351939D248D9D /* tuner_iOS.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = tuner_iOS.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		15518051182A9FF748A33217 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		166EABB0F384D68695A9B829 /* libapp.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libapp.a; sourceTree = "<group>"; };
 		1DBF7F83BAC8E017C61FBDF2 /* LaunchScreen.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = LaunchScreen.storyboard; sourceTree = "<group>"; };
 		2AECB67D6E8870FD643EA7E2 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
 		38F8C85E1E586B7E699F0459 /* Metal.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Metal.framework; path = System/Library/Frameworks/Metal.framework; sourceTree = SDKROOT; };
-		3FA1D198D44D1B6FBAAC348F /* lib.rs */ = {isa = PBXFileReference; lastKnownFileType = text; path = lib.rs; sourceTree = "<group>"; };
+		3FA1D198D44D1B6FBAAC348F /* lib.rs */ = {isa = PBXFileReference; path = lib.rs; sourceTree = "<group>"; };
 		4B15E85CC028EC7B8477D0FC /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Security.framework; path = System/Library/Frameworks/Security.framework; sourceTree = SDKROOT; };
-		5C80AF0C960015E76E16E743 /* main.rs */ = {isa = PBXFileReference; lastKnownFileType = text; path = main.rs; sourceTree = "<group>"; };
+		5C80AF0C960015E76E16E743 /* main.rs */ = {isa = PBXFileReference; path = main.rs; sourceTree = "<group>"; };
 		63AB4E392CFAD8C4C314B0D3 /* assets */ = {isa = PBXFileReference; lastKnownFileType = folder; path = assets; sourceTree = SOURCE_ROOT; };
 		691A321145FF2B54DBCE8FC4 /* libapp.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libapp.a; sourceTree = "<group>"; };
 		7BD30C8803DE05BE67B744A5 /* WebKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WebKit.framework; path = System/Library/Frameworks/WebKit.framework; sourceTree = SDKROOT; };
 		8BF3AD010A380444173F71F7 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		ABB246DCC665A4179ACABB3D /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
+		AE67FF17D1C7B4947CA3AD87 /* libapp.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libapp.a; sourceTree = "<group>"; };
 		BE93BECDD95C4ACE3572B758 /* tuner_iOS.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = tuner_iOS.entitlements; sourceTree = "<group>"; };
 		DEA0904C0A1FD947AB7EF2B7 /* bindings.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = bindings.h; sourceTree = "<group>"; };
 		E01A8DB8E6DCB54BACB0C632 /* main.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = main.mm; sourceTree = "<group>"; };
@@ -72,6 +76,8 @@
 		1202C06B7A395FFCC1BA93D8 /* Externals */ = {
 			isa = PBXGroup;
 			children = (
+				6F21C9520409004137C2A0A1 /* arm64 */,
+				FED51FFA595FE7F0103A578B /* x86_64 */,
 			);
 			path = Externals;
 			sourceTree = "<group>";
@@ -94,10 +100,18 @@
 			path = Sources;
 			sourceTree = "<group>";
 		};
+		35534DFDBAE96302AD6E5233 /* debug */ = {
+			isa = PBXGroup;
+			children = (
+				166EABB0F384D68695A9B829 /* libapp.a */,
+			);
+			path = debug;
+			sourceTree = "<group>";
+		};
 		4E0D202FD4F52BD9478AC380 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				0FEB9F297C2351939D248D9D /* TuneR.app */,
+				0FEB9F297C2351939D248D9D /* tuner_iOS.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -115,6 +129,14 @@
 				7BD30C8803DE05BE67B744A5 /* WebKit.framework */,
 			);
 			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		6F21C9520409004137C2A0A1 /* arm64 */ = {
+			isa = PBXGroup;
+			children = (
+				35534DFDBAE96302AD6E5233 /* debug */,
+			);
+			path = arm64;
 			sourceTree = "<group>";
 		};
 		AC3A12A71FFE8231D99FF0B6 = {
@@ -141,6 +163,14 @@
 			path = tuner_iOS;
 			sourceTree = "<group>";
 		};
+		CE771A98017636389DF4CE5C /* debug */ = {
+			isa = PBXGroup;
+			children = (
+				AE67FF17D1C7B4947CA3AD87 /* libapp.a */,
+			);
+			path = debug;
+			sourceTree = "<group>";
+		};
 		D6931AE90731C7362D145983 /* tuner */ = {
 			isa = PBXGroup;
 			children = (
@@ -148,6 +178,14 @@
 				0A7B46D384E76AD6D70B1F14 /* bindings */,
 			);
 			path = tuner;
+			sourceTree = "<group>";
+		};
+		FED51FFA595FE7F0103A578B /* x86_64 */ = {
+			isa = PBXGroup;
+			children = (
+				CE771A98017636389DF4CE5C /* debug */,
+			);
+			path = x86_64;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -170,7 +208,7 @@
 			packageProductDependencies = (
 			);
 			productName = tuner_iOS;
-			productReference = 0FEB9F297C2351939D248D9D /* TuneR.app */;
+			productReference = 0FEB9F297C2351939D248D9D /* tuner_iOS.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -181,6 +219,11 @@
 			attributes = {
 				BuildIndependentTargetsInParallel = YES;
 				LastUpgradeCheck = 1430;
+				TargetAttributes = {
+					3AFEEE2699AE5101DECDE969 = {
+						DevelopmentTeam = HZTPA767R3;
+					};
+				};
 			};
 			buildConfigurationList = F5A28663B777D69879967570 /* Build configuration list for PBXProject "tuner" */;
 			developmentRegion = en;
@@ -209,6 +252,8 @@
 				0B4B185CF3246A046B7DEAFA /* Assets.xcassets in Resources */,
 				654D96BF2CBA8F745F38F617 /* LaunchScreen.storyboard in Resources */,
 				442EB593EE41A5A802485C8E /* assets in Resources */,
+				6068536F902B58D87D406738 /* libapp.a in Resources */,
+				FCAECA92C70C1F0333B7F284 /* libapp.a in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -273,22 +318,10 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				"LIBRARY_SEARCH_PATHS[arch=arm64]" = (
-					"$(inherited)",
-					"$(PROJECT_DIR)/Externals/arm64/$(CONFIGURATION)",
-					"$(SDKROOT)/usr/lib/swift",
-					"$(DEVELOPER_DIR)/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/$(PLATFORM_NAME)",
-					"$(DEVELOPER_DIR)/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift-5.0/$(PLATFORM_NAME)",
-				);
-				"LIBRARY_SEARCH_PATHS[arch=x86_64]" = (
-					"$(inherited)",
-					"$(PROJECT_DIR)/Externals/x86_64/$(CONFIGURATION)",
-					"$(SDKROOT)/usr/lib/swift",
-					"$(DEVELOPER_DIR)/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/$(PLATFORM_NAME)",
-					"$(DEVELOPER_DIR)/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift-5.0/$(PLATFORM_NAME)",
-				);
+				"LIBRARY_SEARCH_PATHS[arch=arm64]" = "$(inherited) $(PROJECT_DIR)/Externals/arm64/$(CONFIGURATION) $(SDKROOT)/usr/lib/swift $(DEVELOPER_DIR)/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/$(PLATFORM_NAME) $(DEVELOPER_DIR)/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift-5.0/$(PLATFORM_NAME)";
+				"LIBRARY_SEARCH_PATHS[arch=x86_64]" = "$(inherited) $(PROJECT_DIR)/Externals/x86_64/$(CONFIGURATION) $(SDKROOT)/usr/lib/swift $(DEVELOPER_DIR)/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/$(PLATFORM_NAME) $(DEVELOPER_DIR)/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift-5.0/$(PLATFORM_NAME)";
 				PRODUCT_BUNDLE_IDENTIFIER = com.radio.tuner;
-				PRODUCT_NAME = "TuneR";
+				PRODUCT_NAME = TuneR;
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VALID_ARCHS = "arm64  x86_64";
@@ -437,22 +470,10 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				"LIBRARY_SEARCH_PATHS[arch=arm64]" = (
-					"$(inherited)",
-					"$(PROJECT_DIR)/Externals/arm64/$(CONFIGURATION)",
-					"$(SDKROOT)/usr/lib/swift",
-					"$(DEVELOPER_DIR)/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/$(PLATFORM_NAME)",
-					"$(DEVELOPER_DIR)/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift-5.0/$(PLATFORM_NAME)",
-				);
-				"LIBRARY_SEARCH_PATHS[arch=x86_64]" = (
-					"$(inherited)",
-					"$(PROJECT_DIR)/Externals/x86_64/$(CONFIGURATION)",
-					"$(SDKROOT)/usr/lib/swift",
-					"$(DEVELOPER_DIR)/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/$(PLATFORM_NAME)",
-					"$(DEVELOPER_DIR)/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift-5.0/$(PLATFORM_NAME)",
-				);
+				"LIBRARY_SEARCH_PATHS[arch=arm64]" = "$(inherited) $(PROJECT_DIR)/Externals/arm64/$(CONFIGURATION) $(SDKROOT)/usr/lib/swift $(DEVELOPER_DIR)/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/$(PLATFORM_NAME) $(DEVELOPER_DIR)/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift-5.0/$(PLATFORM_NAME)";
+				"LIBRARY_SEARCH_PATHS[arch=x86_64]" = "$(inherited) $(PROJECT_DIR)/Externals/x86_64/$(CONFIGURATION) $(SDKROOT)/usr/lib/swift $(DEVELOPER_DIR)/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/$(PLATFORM_NAME) $(DEVELOPER_DIR)/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift-5.0/$(PLATFORM_NAME)";
 				PRODUCT_BUNDLE_IDENTIFIER = com.radio.tuner;
-				PRODUCT_NAME = "TuneR";
+				PRODUCT_NAME = TuneR;
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VALID_ARCHS = "arm64  x86_64";
