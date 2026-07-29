@@ -129,5 +129,5 @@ TuneR/
 | 旧iOSでレスポンシブ(`md:`等)が全滅 | Tailwind v4の範囲記法 `@media (width >= …)` は WebKit 16.4未満で無効 | `@csstools/postcss-media-minmax` で旧記法に変換（vite.config.ts設定済み） |
 | 実機dev中にコード変更が反映されない | HMRのWebSocketがlocalhost固定で実機から届かない | `hmr.host` は `TAURI_DEV_HOST` を優先（vite.config.ts設定済み）。修正前のセッションはアプリ再起動で反映 |
 | Xcode GUIから▶で `pnpm: command not found` | GUI起動のXcodeはターミナルのPATHを継がない | ビルドスクリプト先頭でPATHをexport（project.yml/pbxproj設定済み） |
-| iOS 15実機(旧iPad等)へのデプロイ | Tauri CLIはCoreDevice(iOS 17+)しか列挙しない | `pnpm tauri ios dev --open --host` でXcodeを開き、実行先に実機を選んで▶ |
+| iOS 15実機(旧iPad等)へのデプロイ | `devicectl`はCoreDevice(iOS 17+)しか列挙せず`ERROR: The specified device was not found`になる | Xcode GUI: `pnpm tauri ios dev --open --host` で開き実行先に実機を選んで▶。CLIのみで済ませたい場合は`brew install ios-deploy`を使う(usbmuxd/MobileDevice経由でiOS 15でも動く)。`pnpm tauri ios build`でIPA生成後、`unzip`で`Payload/*.app`を取り出し`ios-deploy --id <UDID> --bundle <path>.app --justlaunch`。UDIDは`ios-deploy -c`または`xcrun xctrace list devices`で確認(devicectlの表示UDIDとは別形式) |
 | iOSで音量スライダーが効かない | iOS/iPadOSは `audio.volume` への書き込みをOS仕様で無視 | 仕様。音量は本体ボタンで調整（iOSでは音量UI非表示が望ましい・将来課題） |
