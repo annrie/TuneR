@@ -73,6 +73,11 @@ targets:
       base:
         DEVELOPMENT_TEAM: HZTPA767R3
         ENABLE_BITCODE: false
+        # Build Rust Codeフェーズ(tauri ios xcode-script)はproject.pbxprojを読むが、
+        # これはinputFilesに宣言できない。YESだとsandbox-execが file-read-data を拒否し
+        # 「failed to read project.pbxproj: Operation not permitted (os error 1)」で
+        # exit 65になる。Xcode GUIの"Update to recommended settings"がYESに戻すので注意
+        ENABLE_USER_SCRIPT_SANDBOXING: false
         ARCHS: [arm64, x86_64]
         VALID_ARCHS: arm64  x86_64 
         LIBRARY_SEARCH_PATHS[arch=x86_64]: $(inherited) $(PROJECT_DIR)/Externals/x86_64/$(CONFIGURATION) $(SDKROOT)/usr/lib/swift $(DEVELOPER_DIR)/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/$(PLATFORM_NAME) $(DEVELOPER_DIR)/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift-5.0/$(PLATFORM_NAME)
