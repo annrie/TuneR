@@ -11,6 +11,29 @@
 </p>
 
 <p align="center">
+  <!-- License -->
+  <a href="LICENSE">
+    <img src="https://img.shields.io/github/license/annrie/TuneR.svg" alt="License">
+  </a>
+  <!-- Latest release -->
+  <a href="https://github.com/annrie/TuneR/releases/latest">
+    <img src="https://img.shields.io/github/v/release/annrie/TuneR.svg" alt="Latest release">
+  </a>
+  <!-- Downloads total -->
+  <a href="https://github.com/annrie/TuneR/releases">
+    <img src="https://img.shields.io/github/downloads/annrie/TuneR/total.svg" alt="Total downloads">
+  </a>
+  <!-- Downloads latest release -->
+  <a href="https://github.com/annrie/TuneR/releases/latest">
+    <img src="https://img.shields.io/github/downloads/annrie/TuneR/latest/total.svg" alt="Latest release downloads">
+  </a>
+  <!-- Stars -->
+  <a href="https://github.com/annrie/TuneR/stargazers">
+    <img src="https://img.shields.io/github/stars/annrie/TuneR.svg" alt="Stars">
+  </a>
+</p>
+
+<p align="center">
   <a href="#english">English</a> | <a href="#日本語">日本語</a>
 </p>
 
