@@ -6,6 +6,8 @@
   "home": "ホーム",
   "playing": "再生中",
   "stopped": "停止",
+  "reconnecting": "再接続中…",
+  "connection_lost": "接続が切れました",
   "add_favorite": "お気に入りに追加",
   "remove_favorite": "お気に入りから削除",
   "no_results": "見つかりませんでした",

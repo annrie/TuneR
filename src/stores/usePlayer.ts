@@ -33,21 +33,50 @@ const METADATA_POLL_MS = 20_000
 // 一定時間 nowPlaying が空のままならフォールバックのポーリングを起動する。
 const METADATA_WATCHDOG_MS = 10_000
 
+// 再生断ウォッチドッグ & 自動再接続:
+// WKWebViewは接続断時に error/ended を発火せず無音のまま「再生中」で固まる
+// ことがあるため、イベントだけに頼らず timeupdate の停滞を一次検知に使う。
+const STALL_TIMEOUT_MS = 10_000
+const STALL_CHECK_MS = 2_000
+// 再接続のバックオフ間隔。使い切ったら諦めて streamStatus を 'error' に落とす
+// （局側の長時間障害ではリトライし続けても無駄なため）
+const RECONNECT_DELAYS_MS = [1_000, 2_000, 5_000, 10_000, 30_000]
+
+let stallTimer: ReturnType<typeof setInterval> | null = null
+let reconnectTimer: ReturnType<typeof setTimeout> | null = null
+let reconnectAttempt = 0
+let lastProgressAt = 0
+let watchdogAttached = false
+
+export type StreamStatus = 'idle' | 'playing' | 'reconnecting' | 'error'
+
 export const usePlayerStore = defineStore('player', {
   state: () => ({
     currentStation: null as Station | null,
     isPlaying: false,
     volume: 0.8,
     nowPlaying: '' as string,
+    streamStatus: 'idle' as StreamStatus,
   }),
   actions: {
-    async play(station: Station) {
+    async play(station: Station, opts?: { reconnect?: boolean }) {
       // ライブストリームは pause で接続が切れる（サーバ側 Connection: close）ため、
       // 同一局の再開でも常に接続を張り直す。分岐をなくして状態の食い違いも防ぐ。
       const isNewStation = this.currentStation?.stationuuid !== station.stationuuid
       this.currentStation = station
       if (isNewStation) this.nowPlaying = ''
       this.stopMetadataPolling()
+      // 旧ストリームのストール監視が後段のasync初期化中に誤発火し、
+      // 新しい局への再接続を予約してしまわないよう先に止める（後で張り直す）
+      this.stopStallWatchdog()
+
+      // 手動再生では再接続の試行回数をリセットする（自動再接続からの呼び出しでは維持）
+      if (!opts?.reconnect) {
+        reconnectAttempt = 0
+        this.cancelReconnect()
+      }
+      this.streamStatus = opts?.reconnect ? 'reconnecting' : 'playing'
+      this.attachWatchdog()
 
       if (icecastPlayer) {
         icecastPlayer.stop()
@@ -106,6 +135,7 @@ export const usePlayerStore = defineStore('player', {
       }
 
       this.isPlaying = true
+      this.startStallWatchdog()
       this.syncMediaSession()
 
       // ロック画面/コントロールセンターの再生・一時停止ボタンをアプリに接続
@@ -119,6 +149,9 @@ export const usePlayerStore = defineStore('player', {
 
     pause() {
       this.isPlaying = false
+      this.streamStatus = 'idle'
+      this.cancelReconnect()
+      this.stopStallWatchdog()
       if (nativeAudio) nativeAudio.pause()
       if (icecastPlayer) icecastPlayer.stop()
       this.stopMetadataPolling()
@@ -158,6 +191,87 @@ export const usePlayerStore = defineStore('player', {
       if (metadataTimer !== null) {
         clearInterval(metadataTimer)
         metadataTimer = null
+      }
+    },
+
+    // ---- 再生断ウォッチドッグ & 自動再接続 ----
+
+    attachWatchdog() {
+      if (watchdogAttached || !nativeAudio) return
+      watchdogAttached = true
+      nativeAudio.addEventListener('timeupdate', () => this.onStreamProgress())
+      // 'playing' は接続成立直後にデータが進まなくても発火しうるため、
+      // 復旧判定には使わずストール判定の猶予を延ばすだけにする
+      // （試行回数がリセットされ続けて give-up に到達しなくなるのを防ぐ）
+      nativeAudio.addEventListener('playing', () => {
+        lastProgressAt = Date.now()
+      })
+      nativeAudio.addEventListener('error', () => this.onStreamBroken('error'))
+      nativeAudio.addEventListener('ended', () => this.onStreamBroken('ended'))
+    },
+
+    onStreamProgress() {
+      lastProgressAt = Date.now()
+      if (this.streamStatus === 'reconnecting') {
+        console.info('[reconnect] stream recovered')
+        this.streamStatus = 'playing'
+        reconnectAttempt = 0
+        // バックオフ待機中に自然復旧した場合、予約済みの再接続が
+        // 健全な再生を張り直してしまわないよう破棄する
+        this.cancelReconnect()
+      }
+    },
+
+    onStreamBroken(reason: string) {
+      // 手動停止中・諦め済み・再接続待機中は何もしない
+      if (!this.isPlaying || this.streamStatus === 'error') return
+      if (reconnectTimer !== null) return
+      console.warn(`[reconnect] stream broken (${reason})`)
+      this.scheduleReconnect()
+    },
+
+    scheduleReconnect() {
+      if (!this.currentStation) return
+      if (reconnectAttempt >= RECONNECT_DELAYS_MS.length) {
+        console.warn('[reconnect] giving up after max attempts')
+        // pause() が streamStatus を 'idle' に戻すため、'error' は後から設定する
+        this.pause()
+        this.streamStatus = 'error'
+        return
+      }
+      const delay = RECONNECT_DELAYS_MS[reconnectAttempt]
+      reconnectAttempt++
+      this.streamStatus = 'reconnecting'
+      console.info(`[reconnect] attempt ${reconnectAttempt}/${RECONNECT_DELAYS_MS.length} in ${delay}ms`)
+      reconnectTimer = setTimeout(() => {
+        reconnectTimer = null
+        if (!this.isPlaying || !this.currentStation) return
+        this.play(this.currentStation, { reconnect: true })
+      }, delay)
+    },
+
+    cancelReconnect() {
+      if (reconnectTimer !== null) {
+        clearTimeout(reconnectTimer)
+        reconnectTimer = null
+      }
+    },
+
+    startStallWatchdog() {
+      this.stopStallWatchdog()
+      lastProgressAt = Date.now()
+      stallTimer = setInterval(() => {
+        if (!this.isPlaying || reconnectTimer !== null) return
+        if (Date.now() - lastProgressAt > STALL_TIMEOUT_MS) {
+          this.onStreamBroken('stall')
+        }
+      }, STALL_CHECK_MS)
+    },
+
+    stopStallWatchdog() {
+      if (stallTimer !== null) {
+        clearInterval(stallTimer)
+        stallTimer = null
       }
     },
 

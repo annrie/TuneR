@@ -22,7 +22,13 @@
             {{ player.currentStation.name }}
           </div>
           <div class="text-xs text-gray-500 dark:text-gray-400 truncate">{{ player.currentStation.country }}</div>
-          <NowPlayingTitle v-if="player.nowPlaying" :text="player.nowPlaying" class="mt-0.5" />
+          <div v-if="player.streamStatus === 'reconnecting'" class="text-xs text-amber-500 mt-0.5 animate-pulse">
+            {{ t('reconnecting') }}
+          </div>
+          <div v-else-if="player.streamStatus === 'error'" class="text-xs text-red-500 mt-0.5">
+            {{ t('connection_lost') }}
+          </div>
+          <NowPlayingTitle v-else-if="player.nowPlaying" :text="player.nowPlaying" class="mt-0.5" />
         </div>
       </div>
 
