@@ -46,6 +46,7 @@ let stallTimer: ReturnType<typeof setInterval> | null = null
 let reconnectTimer: ReturnType<typeof setTimeout> | null = null
 let reconnectAttempt = 0
 let lastProgressAt = 0
+let lastMediaTime = -1
 let watchdogAttached = false
 
 export type StreamStatus = 'idle' | 'playing' | 'reconnecting' | 'error'
@@ -87,6 +88,9 @@ export const usePlayerStore = defineStore('player', {
       if (nativeAudio) {
         nativeAudio.src = station.url_resolved
         nativeAudio.volume = this.volume
+        // 前ストリームの再生位置を基準に残すと、位置リセットのイベントが
+        // 発火しない環境で新ストリームの前進を検知できなくなるため初期化する
+        lastMediaTime = -1
         nativeAudio.play().catch(e => console.error('Native playback error:', e))
       }
 
@@ -211,6 +215,16 @@ export const usePlayerStore = defineStore('player', {
     },
 
     onStreamProgress() {
+      if (!nativeAudio) return
+      // src再代入による位置リセットでも timeupdate は発火しうるため、
+      // イベントの発生ではなく「再生位置が実際に前進した」ことを
+      // 音声データが流れている根拠とする（偽の復旧判定で試行回数が
+      // リセットされ続け give-up に到達しなくなるのを防ぐ）
+      const t = nativeAudio.currentTime
+      const advanced = t > lastMediaTime && t > 0
+      lastMediaTime = t
+      if (!advanced) return
+
       lastProgressAt = Date.now()
       if (this.streamStatus === 'reconnecting') {
         console.info('[reconnect] stream recovered')
