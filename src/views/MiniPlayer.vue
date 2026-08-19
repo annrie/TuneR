@@ -15,7 +15,13 @@
       </div>
       <div class="flex-1 min-w-0">
         <div class="font-semibold text-sm truncate" :title="station?.name">{{ station?.name ?? '—' }}</div>
-        <NowPlayingTitle v-if="nowPlaying" :text="nowPlaying" />
+        <div v-if="streamStatus === 'reconnecting'" class="text-xs text-amber-500 truncate animate-pulse">
+          {{ t('reconnecting') }}
+        </div>
+        <div v-else-if="streamStatus === 'error'" class="text-xs text-red-500 truncate">
+          {{ t('connection_lost') }}
+        </div>
+        <NowPlayingTitle v-else-if="nowPlaying" :text="nowPlaying" />
       </div>
       <button
         type="button"
@@ -74,6 +80,7 @@
 import { ref, onMounted, onUnmounted } from 'vue'
 import { useI18n } from 'vue-i18n'
 import type { Station } from '../types'
+import type { StreamStatus } from '../stores/usePlayer'
 import { useFavoritesStore } from '../stores/useFavorites'
 import NowPlayingTitle from '../components/NowPlayingTitle.vue'
 import IconRadio from '~icons/heroicons/radio'
@@ -90,6 +97,7 @@ const station = ref<Station | null>(null)
 const isPlaying = ref(false)
 const nowPlaying = ref('')
 const volume = ref(0.8)
+const streamStatus = ref<StreamStatus>('idle')
 const iconError = ref(false)
 
 let unlisten: (() => void) | null = null
@@ -103,12 +111,14 @@ onMounted(async () => {
     isPlaying: boolean
     nowPlaying: string
     volume: number
+    streamStatus: StreamStatus
   }>('player:state', (event) => {
     const prevUuid = station.value?.stationuuid
     station.value = event.payload.station
     isPlaying.value = event.payload.isPlaying
     nowPlaying.value = event.payload.nowPlaying
     volume.value = event.payload.volume
+    streamStatus.value = event.payload.streamStatus
     if (event.payload.station?.stationuuid !== prevUuid) iconError.value = false
   })
 

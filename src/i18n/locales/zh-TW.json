@@ -6,6 +6,8 @@
   "home": "首頁",
   "playing": "正在播放",
   "stopped": "已停止",
+  "reconnecting": "重新連線中…",
+  "connection_lost": "連線中斷",
   "add_favorite": "加入最愛",
   "remove_favorite": "移除最愛",
   "no_results": "找不到結果",

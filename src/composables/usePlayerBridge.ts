@@ -1,5 +1,6 @@
 import { watch, onUnmounted } from 'vue'
 import { usePlayerStore } from '../stores/usePlayer'
+import type { StreamStatus } from '../stores/usePlayer'
 import type { Station } from '../types'
 
 type PlayerCommand =
@@ -13,6 +14,7 @@ interface PlayerState {
   isPlaying: boolean
   nowPlaying: string
   volume: number
+  streamStatus: StreamStatus
 }
 
 /**
@@ -39,6 +41,7 @@ export function usePlayerBridge() {
         isPlaying: player.isPlaying,
         nowPlaying: player.nowPlaying,
         volume: player.volume,
+        streamStatus: player.streamStatus,
       }
       emit('player:state', payload)
     }
@@ -69,6 +72,7 @@ export function usePlayerBridge() {
         player.isPlaying,
         player.nowPlaying,
         player.volume,
+        player.streamStatus,
       ],
       () => broadcast(),
     )

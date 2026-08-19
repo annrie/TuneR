@@ -6,6 +6,8 @@
   "home": "Inicio",
   "playing": "Reproduciendo",
   "stopped": "Detenido",
+  "reconnecting": "Reconectando…",
+  "connection_lost": "Conexión perdida",
   "add_favorite": "Añadir a favoritos",
   "remove_favorite": "Eliminar de favoritos",
   "no_results": "No se encontraron resultados",

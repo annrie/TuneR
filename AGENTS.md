@@ -73,7 +73,7 @@ TuneR/
 - **メインウィンドウが唯一の音源**（`usePlayerStore` + Audio要素を保持）。ミニ窓は音を持たない
 - ミニ窓は Tauri イベントのリモコン:
   - 送信: `player:command`（`sync` / `toggle` / `volume` / `play`）
-  - 受信: `player:state`（局/再生状態/nowPlaying/音量）
+  - 受信: `player:state`（局/再生状態/nowPlaying/音量/streamStatus）
 - これにより **二重再生が原理的に起きない**
 - 役割判定は `?window=mini` クエリで**同期的**に行う（`usePlayerBridge`の`onUnmounted`がsetup同期実行を要求するため、async判定は不可）
 - Rust側: ミニ窓は `WebviewUrl::App("index.html?window=mini")` で生成。メニュー項目はapp stateに保持し、表示中の窓に応じて `set_text` で「ミニプレイヤー / メインウィンドウ」を切替
@@ -121,6 +121,7 @@ TuneR/
 | HTTPストリームが鳴らない | macOS ATS | `Info.plist`の`NSAllowsArbitraryLoads` + CSPの`media-src http://*` |
 | 局のfaviconが出ない | CSP/壊れたURL | CSPに`img-src http://* https://* data: blob:` |
 | ミニ窓で二重に音が鳴る | ミニ窓が独自に再生 | ミニ窓は`player:command`送信のみ。音源はメイン窓だけ |
+| 再生が無音のまま「再生中」表示で固まる | WKWebViewは接続断時に`error`/`ended`を発火せず黙って停止することがある（Zeno.FM系中継局で頻発） | `timeupdate`停滞のストールウォッチドッグ→バックオフ付き自動再接続（`usePlayer.ts`）。5回失敗で`streamStatus: error`＝「接続が切れました」表示に落とす |
 | 一部の局で曲名が出ない | 局のCORS `Access-Control-Allow-Headers` に `Icy-Metadata` が無く、IcecastMetadataPlayerが**エラーを出さずに**HTML5再生へ内部縮退（メタデータゼロ） | 10秒ウォッチドッグでRustフォールバックのポーリングを起動（`usePlayer.ts`） |
 | 曲名が先頭数文字で切れる | ICYの`StreamTitle`はエスケープ機構がなく、曲名内のアポストロフィ（`You're`等）で誤終端 | パーサは `';` 終端を優先（`lib.rs` の `parse_stream_title`、ユニットテストあり） |
 | iOS実機でJS/曲名まわりを検証したい | ブラウザでdev URLを開いてもRust（invoke）が無い別環境になり検証にならない | 必ずアプリ本体で確認。Mac Safariの「開発」メニュー → 実機 → TuneRのWebViewでコンソールを見る |
