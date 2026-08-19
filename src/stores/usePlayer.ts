@@ -58,6 +58,9 @@ export const usePlayerStore = defineStore('player', {
     volume: 0.8,
     nowPlaying: '' as string,
     streamStatus: 'idle' as StreamStatus,
+    // 本番ビルドはコンソールが見えないため、直近のMediaErrorコードを
+    // UIに出せるよう保持する（1:ABORTED 2:NETWORK 3:DECODE 4:SRC_NOT_SUPPORTED）
+    lastErrorCode: null as number | null,
   }),
   actions: {
     async play(station: Station, opts?: { reconnect?: boolean }) {
@@ -75,6 +78,7 @@ export const usePlayerStore = defineStore('player', {
       if (!opts?.reconnect) {
         reconnectAttempt = 0
         this.cancelReconnect()
+        this.lastErrorCode = null
       }
       this.streamStatus = opts?.reconnect ? 'reconnecting' : 'playing'
       this.attachWatchdog()
@@ -210,7 +214,10 @@ export const usePlayerStore = defineStore('player', {
       nativeAudio.addEventListener('playing', () => {
         lastProgressAt = Date.now()
       })
-      nativeAudio.addEventListener('error', () => this.onStreamBroken('error'))
+      nativeAudio.addEventListener('error', () => {
+        this.lastErrorCode = nativeAudio?.error?.code ?? null
+        this.onStreamBroken('error')
+      })
       nativeAudio.addEventListener('ended', () => this.onStreamBroken('ended'))
     },
 
