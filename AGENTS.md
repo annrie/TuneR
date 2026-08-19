@@ -67,7 +67,7 @@ TuneR/
 3. **IcecastMetadataPlayer は動的import** — モジュール初期化時に `new Worker()` を呼ぶ。WKWebViewは`tauri://`からのWorker生成をSecurityErrorで拒否するため、`play()`内で`await import(...)`
 4. **modulePreload無効** — `vite.config.ts` の `build.modulePreload: false`（WKWebViewでのモード不一致防止）
 5. **Vite dev は port 3000 / strictPort** — `tauri.conf.json` の `devUrl` と一致させる
-6. **HTTPストリーム再生** — `Info.plist` の `NSAllowsArbitraryLoads: true`（macOS ATS対策）。CSPにも `media-src`/`img-src` で `http://*` を許可
+6. **HTTPストリーム再生** — `Info.plist` の `NSAllowsArbitraryLoads: true`（macOS ATS対策）。CSPの `media-src`/`img-src`/`connect-src` は素の `*`（+ `data: blob:`）を使う（**WebKitはポートワイルドカード`http://*:*`を尊重せず、`https://*`はデフォルトポートのみ** — 非標準ポート局は `*` でしか通らない）
 
 ### ミニプレイヤー設計（重要）
 - **メインウィンドウが唯一の音源**（`usePlayerStore` + Audio要素を保持）。ミニ窓は音を持たない
@@ -118,9 +118,10 @@ TuneR/
 | `tauri build` で白画面 | history mode router | `createWebHashHistory()` を使う |
 | 起動時に白画面 | Worker生成エラー | IcecastMetadataPlayerを`play()`内で動的import |
 | カラーモードが auto に戻らない | `useColorMode().value`が解決後モードを返す | `useStorage`/`.store`で設定値を扱う |
-| HTTPストリームが鳴らない | macOS ATS | `Info.plist`の`NSAllowsArbitraryLoads` + CSPの`media-src http://*` |
-| 局のfaviconが出ない | CSP/壊れたURL | CSPに`img-src http://* https://* data: blob:` |
+| HTTPストリームが鳴らない | macOS ATS | `Info.plist`の`NSAllowsArbitraryLoads` + CSPの`media-src *` |
+| 局のfaviconが出ない | CSP/壊れたURL | CSPに`img-src * data: blob:` |
 | ミニ窓で二重に音が鳴る | ミニ窓が独自に再生 | ミニ窓は`player:command`送信のみ。音源はメイン窓だけ |
+| 非標準ポート局（`:3330`/`:8000`等）が本番だけ再生不可 | CSPの`https://*`は**デフォルトポートにしかマッチしない**（CSP仕様）うえ、ポートワイルドカード`http://*:*`は**WebKitが尊重しない**（実測）。devはVite dev server経由でCSP差分に気づけない | media-src/img-src/connect-srcに素の`*`を付与（tauri.conf.json設定済み）。切り分けにはエラー表示のEコード（E2=NETWORK/E4=SRC_NOT_SUPPORTED）を見る |
 | 再生が無音のまま「再生中」表示で固まる | WKWebViewは接続断時に`error`/`ended`を発火せず黙って停止することがある（Zeno.FM系中継局で頻発） | `timeupdate`停滞のストールウォッチドッグ→バックオフ付き自動再接続（`usePlayer.ts`）。5回失敗で`streamStatus: error`＝「接続が切れました」表示に落とす |
 | 一部の局で曲名が出ない | 局のCORS `Access-Control-Allow-Headers` に `Icy-Metadata` が無く、IcecastMetadataPlayerが**エラーを出さずに**HTML5再生へ内部縮退（メタデータゼロ） | 10秒ウォッチドッグでRustフォールバックのポーリングを起動（`usePlayer.ts`） |
 | 曲名が先頭数文字で切れる | ICYの`StreamTitle`はエスケープ機構がなく、曲名内のアポストロフィ（`You're`等）で誤終端 | パーサは `';` 終端を優先（`lib.rs` の `parse_stream_title`、ユニットテストあり） |

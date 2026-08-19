@@ -26,7 +26,7 @@
             {{ t('reconnecting') }}
           </div>
           <div v-else-if="player.streamStatus === 'error'" class="text-xs text-red-500 mt-0.5">
-            {{ t('connection_lost') }}
+            {{ t('connection_lost') }}{{ player.lastErrorCode ? ` (E${player.lastErrorCode})` : '' }}
           </div>
           <NowPlayingTitle v-else-if="player.nowPlaying" :text="player.nowPlaying" class="mt-0.5" />
         </div>
