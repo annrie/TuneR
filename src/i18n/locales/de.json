@@ -8,6 +8,7 @@
   "stopped": "Gestoppt",
   "reconnecting": "Verbindung wird wiederhergestellt…",
   "connection_lost": "Verbindung unterbrochen",
+  "codec_unsupported": "Nicht unterstützt",
   "add_favorite": "Zu Favoriten hinzufügen",
   "remove_favorite": "Aus Favoriten entfernen",
   "no_results": "Keine Ergebnisse gefunden",
