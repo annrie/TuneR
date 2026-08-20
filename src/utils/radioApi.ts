@@ -2,6 +2,14 @@ import type { Station } from '../types'
 
 const BASE_URL = 'https://de1.api.radio-browser.info/json'
 
+// WKWebView（Safari系）のaudio要素が再生できないコーデックの局は
+// リストに出しても必ず失敗するため一覧・検索結果から除外する。
+// Radio BrowserはOgg容器の局（Vorbis/Opus）を codec='OGG' と報告する
+const UNPLAYABLE_CODECS = ['OGG', 'VORBIS', 'OPUS', 'WMA']
+
+const isPlayableStation = (s: Station) =>
+  !UNPLAYABLE_CODECS.some(c => (s.codec ?? '').toUpperCase().includes(c))
+
 const jpCountryMap: Record<string, string> = {
   '日本': 'Japan',
   'アメリカ': 'United States',
@@ -51,7 +59,7 @@ export const radioApi = {
         url.searchParams.append('reverse', 'true')
         const res = await fetch(url.toString())
         if (!res.ok) return []
-        return await res.json() as Station[]
+        return (await res.json() as Station[]).filter(isPlayableStation)
       }
 
       if (isCountry) {
@@ -104,7 +112,7 @@ export const radioApi = {
       if (!response.ok) throw new Error('API Error')
 
       const data = await response.json()
-      return data as Station[]
+      return (data as Station[]).filter(isPlayableStation)
     } catch (error) {
       console.error('Failed to fetch top stations:', error)
       return []
