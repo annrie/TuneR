@@ -90,7 +90,15 @@ export const usePlayerStore = defineStore('player', {
 
       // 1. ネイティブ Audio で即座に再生
       if (nativeAudio) {
+        // 同一URLをsrcに再代入しても、停止中に死んだ接続やリダイレクト解決結果
+        // などの古いリソース状態が要素内に残り、再開が失敗し続けることがある
+        // （「別の局に切り替えて戻すと直る」= リソースの強制入れ替えと同じ効果を
+        // 1回のplay()内で再現するため、一旦srcを外してload()で確実に破棄する）
+        nativeAudio.pause()
+        nativeAudio.removeAttribute('src')
+        nativeAudio.load()
         nativeAudio.src = station.url_resolved
+        nativeAudio.load()
         nativeAudio.volume = this.volume
         // 前ストリームの再生位置を基準に残すと、位置リセットのイベントが
         // 発火しない環境で新ストリームの前進を検知できなくなるため初期化する
