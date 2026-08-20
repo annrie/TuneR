@@ -1,6 +1,30 @@
 # Changelog
 
 
+## v0.3.0
+
+[compare changes](https://github.com/annrie/TuneR/compare/v0.2.1...v0.3.0)
+
+### 🚀 新機能
+
+- **stations:** 🚀 再生不可局を除外せず「非対応」バッジで明示する方式へ転換 ([656c33c](https://github.com/annrie/TuneR/commit/656c33c))
+
+### 🐛 バグ修正
+
+- **stations:** 🐛 Oggライブストリーム非対応を静的初期値+実再生成功で解除する判定へ ([a56cf10](https://github.com/annrie/TuneR/commit/a56cf10))
+
+### ♻️ リファクタリング
+
+- **player:** ♻️ コーデック除外を静的リストからcanPlayType実行時判定へ ([1581c63](https://github.com/annrie/TuneR/commit/1581c63))
+
+### 📦 ビルド
+
+- **deps:** ⬆️ Snyk指摘のesbuild/nanoid/postcssを更新しminor/patch一括適用 ([b6e3c55](https://github.com/annrie/TuneR/commit/b6e3c55))
+
+### ❤️ Contributors
+
+- Annrie ([@annrie](https://github.com/annrie))
+
 ## v0.2.1
 
 [compare changes](https://github.com/annrie/TuneR/compare/v0.2.0...v0.2.1)
