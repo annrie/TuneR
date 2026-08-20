@@ -16,15 +16,15 @@
   "dependencies": {
     "@headlessui/vue": "^1.7.23",
     "@tauri-apps/api": "^2.11.1",
-    "@vueuse/core": "^14.3.0",
+    "@vueuse/core": "^14.4.0",
     "icecast-metadata-player": "^1.17.13",
-    "pinia": "^4.0.2",
-    "vue": "^3.5.40",
-    "vue-i18n": "^11.4.6",
+    "pinia": "^4.0.3",
+    "vue": "^3.5.41",
+    "vue-i18n": "^11.4.8",
     "vue-router": "^5.2.0"
   },
   "devDependencies": {
-    "@csstools/postcss-media-minmax": "^3.0.3",
+    "@csstools/postcss-media-minmax": "^3.0.4",
     "@iconify-json/heroicons": "^1.2.3",
     "@tailwindcss/vite": "^4.3.3",
     "@tauri-apps/cli": "^2.11.4",
@@ -32,12 +32,13 @@
     "@types/node": "^25.9.5",
     "@vitejs/plugin-vue": "^6.0.8",
     "changelogen": "^0.6.2",
+    "esbuild": "^0.28.2",
     "tailwindcss": "^4.3.3",
     "typescript": "~5.9.3",
     "unplugin-icons": "^23.0.1",
     "unplugin-vue-components": "^32.1.0",
-    "vite": "^8.1.5",
-    "vue-tsc": "^3.3.7"
+    "vite": "^8.2.1",
+    "vue-tsc": "^3.3.10"
   },
   "changelog": {
     "types": {
