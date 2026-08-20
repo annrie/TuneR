@@ -123,7 +123,7 @@ TuneR/
 | ミニ窓で二重に音が鳴る | ミニ窓が独自に再生 | ミニ窓は`player:command`送信のみ。音源はメイン窓だけ |
 | 非標準ポート局（`:3330`/`:8000`等）が本番だけ再生不可 | CSPの`https://*`は**デフォルトポートにしかマッチしない**（CSP仕様）うえ、ポートワイルドカード`http://*:*`は**WebKitが尊重しない**（実測）。devはVite dev server経由でCSP差分に気づけない | media-src/img-src/connect-srcに素の`*`を付与（tauri.conf.json設定済み）。切り分けにはエラー表示のEコード（E2=NETWORK/E4=SRC_NOT_SUPPORTED）を見る |
 | 一時停止→（スリープ等を挟み）同じ局を再生すると「接続が切れました」になる。別の局を経由すると直る | 同一URLをsrcに再代入しても、要素内に残った古いリソース状態（死んだ接続・リダイレクト解決結果）が再利用される | `play()`でsrcを一旦外し`load()`で破棄してから張り直す（`usePlayer.ts`対応済み） |
-| Vorbis/Opus局（Listen.Moe Vorbis等）が再生できない | WKWebViewはOggコンテナ非対応（原理的に再生不可） | `radioApi.ts`で`codec`がOGG/VORBIS/OPUS/WMAの局を一覧・検索結果から除外済み |
+| Vorbis/Opus局（Listen.Moe Vorbis等）が再生できない | 実行環境のWKWebViewがOggコンテナ非対応の場合、原理的に再生不可 | `radioApi.ts`が`canPlayType()`の実行時判定で再生不可コーデックの局を一覧・検索結果から除外（OSの対応拡大に自動追随） |
 | 再生が無音のまま「再生中」表示で固まる | WKWebViewは接続断時に`error`/`ended`を発火せず黙って停止することがある（Zeno.FM系中継局で頻発） | `timeupdate`停滞のストールウォッチドッグ→バックオフ付き自動再接続（`usePlayer.ts`）。5回失敗で`streamStatus: error`＝「接続が切れました」表示に落とす |
 | 一部の局で曲名が出ない | 局のCORS `Access-Control-Allow-Headers` に `Icy-Metadata` が無く、IcecastMetadataPlayerが**エラーを出さずに**HTML5再生へ内部縮退（メタデータゼロ） | 10秒ウォッチドッグでRustフォールバックのポーリングを起動（`usePlayer.ts`） |
 | 曲名が先頭数文字で切れる | ICYの`StreamTitle`はエスケープ機構がなく、曲名内のアポストロフィ（`You're`等）で誤終端 | パーサは `';` 終端を優先（`lib.rs` の `parse_stream_title`、ユニットテストあり） |

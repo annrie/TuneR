@@ -2,13 +2,28 @@ import type { Station } from '../types'
 
 const BASE_URL = 'https://de1.api.radio-browser.info/json'
 
-// WKWebView（Safari系）のaudio要素が再生できないコーデックの局は
-// リストに出しても必ず失敗するため一覧・検索結果から除外する。
+// 実行環境のWebKitが再生できないコーデックの局は、リストに出しても
+// 必ず失敗するため一覧・検索結果から除外する。静的リストではなく
+// canPlayType()で実行時判定し、OSのコーデック対応拡大に自動追随する。
 // Radio BrowserはOgg容器の局（Vorbis/Opus）を codec='OGG' と報告する
-const UNPLAYABLE_CODECS = ['OGG', 'VORBIS', 'OPUS', 'WMA']
+const CODEC_MIME_CANDIDATES: Record<string, string> = {
+  OGG: 'audio/ogg; codecs="vorbis"',
+  VORBIS: 'audio/ogg; codecs="vorbis"',
+  OPUS: 'audio/ogg; codecs="opus"',
+  WMA: 'audio/x-ms-wma',
+}
+
+// canPlayTypeは ''（不可）/'maybe'/'probably' を返す。空文字のものだけ除外
+const unplayableCodecs: string[] = (() => {
+  if (typeof Audio === 'undefined') return []
+  const probe = new Audio()
+  return Object.entries(CODEC_MIME_CANDIDATES)
+    .filter(([, mime]) => probe.canPlayType(mime) === '')
+    .map(([codec]) => codec)
+})()
 
 const isPlayableStation = (s: Station) =>
-  !UNPLAYABLE_CODECS.some(c => (s.codec ?? '').toUpperCase().includes(c))
+  !unplayableCodecs.some(c => (s.codec ?? '').toUpperCase().includes(c))
 
 const jpCountryMap: Record<string, string> = {
   '日本': 'Japan',
