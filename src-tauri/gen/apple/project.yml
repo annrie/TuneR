@@ -55,7 +55,7 @@ targets:
           - UIInterfaceOrientationPortraitUpsideDown
           - UIInterfaceOrientationLandscapeLeft
           - UIInterfaceOrientationLandscapeRight
-        CFBundleShortVersionString: 0.2.0
+        CFBundleShortVersionString: 0.2.1
         # 非HTTPSのラジオ局ストリームを再生するため(Xcode GUIで追加されて
         # いたものをproject.ymlに恒久化。xcodegen再生成で消えるのを防ぐ)
         NSAppTransportSecurity:
