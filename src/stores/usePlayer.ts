@@ -1,6 +1,7 @@
 import { defineStore } from 'pinia'
 import type { Station } from '../types'
 import { fetchIcyMetadata } from '../utils/icyMetadata'
+import { markStationPlayable } from '../utils/codecSupport'
 
 let icecastPlayer: any = null
 const nativeAudio = typeof window !== 'undefined' ? new Audio() : null
@@ -241,6 +242,9 @@ export const usePlayerStore = defineStore('player', {
       if (!advanced) return
 
       lastProgressAt = Date.now()
+      // 実前進＝音声データが流れている確定シグナル。静的に再生不可扱いの
+      // コーデックでも実際に鳴った環境では「非対応」バッジを解除する
+      if (this.currentStation) markStationPlayable(this.currentStation)
       if (this.streamStatus === 'reconnecting') {
         console.info('[reconnect] stream recovered')
         this.streamStatus = 'playing'
