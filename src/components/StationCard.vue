@@ -42,8 +42,14 @@
     </div>
 
     <div class="flex justify-between items-center mt-auto pt-2 border-t border-gray-100 dark:border-gray-700">
-      <span class="text-xs text-gray-500 dark:text-gray-400">
-        {{ station.bitrate }} kbps • {{ station.codec }}
+      <span class="flex items-center gap-1.5 min-w-0 text-xs text-gray-500 dark:text-gray-400">
+        <span class="min-w-0 truncate">{{ station.bitrate }} kbps • {{ station.codec }}</span>
+        <span
+          v-if="isUnplayable"
+          class="flex-shrink-0 px-2 py-0.5 rounded-md bg-amber-100 text-amber-800 dark:bg-amber-900/40 dark:text-amber-300"
+        >
+          {{ t('codec_unsupported') }}
+        </span>
       </span>
       <button
         type="button"
@@ -60,9 +66,11 @@
 
 <script setup lang="ts">
 import { computed, ref } from 'vue'
+import { useI18n } from 'vue-i18n'
 import type { Station } from '../types'
 import { usePlayerStore } from '../stores/usePlayer'
 import { useFavoritesStore } from '../stores/useFavorites'
+import { isUnplayableStation } from '../utils/radioApi'
 import IconRadio from '~icons/heroicons/radio'
 import IconHeart from '~icons/heroicons/heart'
 import IconHeartSolid from '~icons/heroicons/heart-solid'
@@ -73,9 +81,12 @@ const props = defineProps<{
   station: Station
 }>()
 
+const { t } = useI18n()
 const player = usePlayerStore()
 const favorites = useFavoritesStore()
 const iconError = ref(false)
+
+const isUnplayable = computed(() => isUnplayableStation(props.station))
 
 const tags = computed(() => {
   if (!props.station.tags) return []

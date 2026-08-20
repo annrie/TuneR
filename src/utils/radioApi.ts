@@ -2,28 +2,32 @@ import type { Station } from '../types'
 
 const BASE_URL = 'https://de1.api.radio-browser.info/json'
 
-// 実行環境のWebKitが再生できないコーデックの局は、リストに出しても
-// 必ず失敗するため一覧・検索結果から除外する。静的リストではなく
-// canPlayType()で実行時判定し、OSのコーデック対応拡大に自動追随する。
-// Radio BrowserはOgg容器の局（Vorbis/Opus）を codec='OGG' と報告する
-const CODEC_MIME_CANDIDATES: Record<string, string> = {
-  OGG: 'audio/ogg; codecs="vorbis"',
-  VORBIS: 'audio/ogg; codecs="vorbis"',
-  OPUS: 'audio/ogg; codecs="opus"',
-  WMA: 'audio/x-ms-wma',
+// 実行環境のWebKitが再生できないコーデックの局は、再生しても必ず失敗する。
+// 以前は一覧・検索結果から除外していたが、Radio BrowserはOgg容器の局
+// （Vorbis/Opus）をまとめて codec='OGG' と報告するため、probe結果を
+// どちらに倒しても「鳴らない局が並ぶ」か「鳴る局が消える」誤りが避けられない。
+// そこで除外はやめ、ラベルが表しうる全コーデックが再生不可と確定した局だけ
+// 「非対応」バッジで明示する。曖昧な局（片方のみ再生可のOGG等）は
+// バッジなしで表示し、失敗した場合は再生エラー表示（E4）に任せる
+const CODEC_MIME_CANDIDATES: Record<string, string[]> = {
+  OGG: ['audio/ogg; codecs="vorbis"', 'audio/ogg; codecs="opus"'],
+  VORBIS: ['audio/ogg; codecs="vorbis"'],
+  OPUS: ['audio/ogg; codecs="opus"'],
+  WMA: ['audio/x-ms-wma'],
 }
 
-// canPlayTypeは ''（不可）/'maybe'/'probably' を返す。空文字のものだけ除外
+// canPlayTypeは ''（不可）/'maybe'/'probably' を返す。
+// 全候補が '' のラベルだけを「確実に再生不可」と扱う
 const unplayableCodecs: string[] = (() => {
   if (typeof Audio === 'undefined') return []
   const probe = new Audio()
   return Object.entries(CODEC_MIME_CANDIDATES)
-    .filter(([, mime]) => probe.canPlayType(mime) === '')
+    .filter(([, mimes]) => mimes.every(mime => probe.canPlayType(mime) === ''))
     .map(([codec]) => codec)
 })()
 
-const isPlayableStation = (s: Station) =>
-  !unplayableCodecs.some(c => (s.codec ?? '').toUpperCase().includes(c))
+export const isUnplayableStation = (s: Station) =>
+  unplayableCodecs.some(c => (s.codec ?? '').toUpperCase().includes(c))
 
 const jpCountryMap: Record<string, string> = {
   '日本': 'Japan',
@@ -74,7 +78,7 @@ export const radioApi = {
         url.searchParams.append('reverse', 'true')
         const res = await fetch(url.toString())
         if (!res.ok) return []
-        return (await res.json() as Station[]).filter(isPlayableStation)
+        return await res.json() as Station[]
       }
 
       if (isCountry) {
@@ -127,7 +131,7 @@ export const radioApi = {
       if (!response.ok) throw new Error('API Error')
 
       const data = await response.json()
-      return (data as Station[]).filter(isPlayableStation)
+      return data as Station[]
     } catch (error) {
       console.error('Failed to fetch top stations:', error)
       return []
