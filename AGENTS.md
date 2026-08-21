@@ -125,6 +125,7 @@ TuneR/
 | 一時停止→（スリープ等を挟み）同じ局を再生すると「接続が切れました」になる。別の局を経由すると直る | 同一URLをsrcに再代入しても、要素内に残った古いリソース状態（死んだ接続・リダイレクト解決結果）が再利用される | `play()`でsrcを一旦外し`load()`で破棄してから張り直す（`usePlayer.ts`対応済み） |
 | Vorbis/Opus局（Listen.Moe Vorbis等）がE4で再生できない | WebKitはOggの**ファイル**再生に対応していても（macOS 15実測: canPlayTypeは`'probably'`、data URIのOggはcanplay）、Icecastの**無限長Oggライブストリーム**はSRC_NOT_SUPPORTEDで拒否する。つまりcanPlayTypeもファイルprobeもライブ可否を検知できない | `codecSupport.ts`がOgg系を静的に再生不可の初期値とし、StationCardに「非対応」バッジを表示（**一覧からの除外はしない**）。**実再生の成功（再生位置の実前進）でバッジを解除しlocalStorageに永続化** — ライブOgg対応のWebKitでは最初に鳴った時点で自動解除される。OSアップデート後の再実測は `swift scripts/webkit-ogg-probe.swift` |
 | 再生が無音のまま「再生中」表示で固まる | WKWebViewは接続断時に`error`/`ended`を発火せず黙って停止することがある（Zeno.FM系中継局で頻発） | `timeupdate`停滞のストールウォッチドッグ→バックオフ付き自動再接続（`usePlayer.ts`）。5回失敗で`streamStatus: error`＝「接続が切れました」表示に落とす |
+| ミニプレイヤー運用中に「再接続中…」のまま永久に固まる（メインウィンドウを表示すると即復旧するのが特徴） | ストリーム断で音が止まると audible 免除が消え、WebKitが**非表示のメイン窓のページをサスペンド**→バックオフや監視のJSタイマーが全停止して状態機械が凍結する（アプリ活性化では解けない可視性駆動のサスペンド。2026-08-21実測） | `'reconnecting'`の間だけ±1LSBの不可聴WAVループを再生して audible を維持＋表示復帰(`visibilitychange`)時に凍結を検知したら即時再接続（`usePlayer.ts`対応済み） |
 | 一部の局で曲名が出ない | 局のCORS `Access-Control-Allow-Headers` に `Icy-Metadata` が無く、IcecastMetadataPlayerが**エラーを出さずに**HTML5再生へ内部縮退（メタデータゼロ） | 10秒ウォッチドッグでRustフォールバックのポーリングを起動（`usePlayer.ts`） |
 | 曲名が先頭数文字で切れる | ICYの`StreamTitle`はエスケープ機構がなく、曲名内のアポストロフィ（`You're`等）で誤終端 | パーサは `';` 終端を優先（`lib.rs` の `parse_stream_title`、ユニットテストあり） |
 | iOS実機でJS/曲名まわりを検証したい | ブラウザでdev URLを開いてもRust（invoke）が無い別環境になり検証にならない | 必ずアプリ本体で確認。Mac Safariの「開発」メニュー → 実機 → TuneRのWebViewでコンソールを見る |

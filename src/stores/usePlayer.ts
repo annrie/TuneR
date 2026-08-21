@@ -49,6 +49,57 @@ let reconnectAttempt = 0
 let lastProgressAt = 0
 let lastMediaTime = -1
 let watchdogAttached = false
+// play() 実行中カウンタ。表示復帰時のkickが進行中の再接続と二重にならないようにする
+let playsInFlight = 0
+
+// 再接続待機中のサスペンド防止:
+// 音が止まると WebKit は非表示ウィンドウのページごとサスペンドし、バックオフの
+// タイマーが発火せず「再接続中」のまま凍結する（ミニプレイヤー運用時に実測。
+// アプリ活性化では解けず、ウィンドウ再表示でのみ復帰する可視性駆動のサスペンド）。
+// 再接続中だけ不可聴のループを鳴らして audible 扱いを維持し、機構を動かし続ける。
+let keepAliveAudio: HTMLAudioElement | null = null
+
+// ±1LSB の矩形波WAV(8bit/8kHz/1秒)を生成する。完全な無音サンプルは
+// 無音検出で audible 扱いから外れる恐れがあるため、非ゼロかつ不可聴の振幅にする
+function createKeepAliveWavUrl(): string {
+  const sampleRate = 8000
+  const samples = sampleRate
+  const buf = new ArrayBuffer(44 + samples)
+  const v = new DataView(buf)
+  const ascii = (offset: number, s: string) => {
+    for (let i = 0; i < s.length; i++) v.setUint8(offset + i, s.charCodeAt(i))
+  }
+  ascii(0, 'RIFF')
+  v.setUint32(4, 36 + samples, true)
+  ascii(8, 'WAVE')
+  ascii(12, 'fmt ')
+  v.setUint32(16, 16, true)
+  v.setUint16(20, 1, true) // PCM
+  v.setUint16(22, 1, true) // mono
+  v.setUint32(24, sampleRate, true)
+  v.setUint32(28, sampleRate, true)
+  v.setUint16(32, 1, true)
+  v.setUint16(34, 8, true)
+  ascii(36, 'data')
+  v.setUint32(40, samples, true)
+  const pcm = new Uint8Array(buf, 44)
+  for (let i = 0; i < samples; i++) pcm[i] = 128 + (i % 2)
+  return URL.createObjectURL(new Blob([buf], { type: 'audio/wav' }))
+}
+
+function startKeepAlive() {
+  if (!keepAliveAudio) {
+    keepAliveAudio = new Audio(createKeepAliveWavUrl())
+    keepAliveAudio.loop = true
+    // iOSではvolume書き込みが無視されるが、±1LSBなのでフル音量でも実質無音
+    keepAliveAudio.volume = 0.05
+  }
+  keepAliveAudio.play().catch(e => console.warn('[keepalive] play failed:', e))
+}
+
+function stopKeepAlive() {
+  keepAliveAudio?.pause()
+}
 
 export type StreamStatus = 'idle' | 'playing' | 'reconnecting' | 'error'
 
@@ -65,108 +116,116 @@ export const usePlayerStore = defineStore('player', {
   }),
   actions: {
     async play(station: Station, opts?: { reconnect?: boolean }) {
-      // ライブストリームは pause で接続が切れる（サーバ側 Connection: close）ため、
-      // 同一局の再開でも常に接続を張り直す。分岐をなくして状態の食い違いも防ぐ。
-      const isNewStation = this.currentStation?.stationuuid !== station.stationuuid
-      this.currentStation = station
-      if (isNewStation) this.nowPlaying = ''
-      this.stopMetadataPolling()
-      // 旧ストリームのストール監視が後段のasync初期化中に誤発火し、
-      // 新しい局への再接続を予約してしまわないよう先に止める（後で張り直す）
-      this.stopStallWatchdog()
-
-      // 手動再生では再接続の試行回数をリセットする（自動再接続からの呼び出しでは維持）
-      if (!opts?.reconnect) {
-        reconnectAttempt = 0
-        this.cancelReconnect()
-        this.lastErrorCode = null
-      }
-      this.streamStatus = opts?.reconnect ? 'reconnecting' : 'playing'
-      this.attachWatchdog()
-
-      if (icecastPlayer) {
-        icecastPlayer.stop()
-        icecastPlayer = null
-      }
-
-      // 1. ネイティブ Audio で即座に再生
-      if (nativeAudio) {
-        // 同一URLをsrcに再代入しても、停止中に死んだ接続やリダイレクト解決結果
-        // などの古いリソース状態が要素内に残り、再開が失敗し続けることがある
-        // （「別の局に切り替えて戻すと直る」= リソースの強制入れ替えと同じ効果を
-        // 1回のplay()内で再現するため、一旦srcを外してload()で確実に破棄する）
-        nativeAudio.pause()
-        nativeAudio.removeAttribute('src')
-        nativeAudio.load()
-        nativeAudio.src = station.url_resolved
-        nativeAudio.load()
-        nativeAudio.volume = this.volume
-        // 前ストリームの再生位置を基準に残すと、位置リセットのイベントが
-        // 発火しない環境で新ストリームの前進を検知できなくなるため初期化する
-        lastMediaTime = -1
-        nativeAudio.play().catch(e => console.error('Native playback error:', e))
-      }
-
-      // 2. IcecastMetadataPlayer でメタデータ取得
-      // tauri:// プロトコルでは Worker が使えないため動的インポートで遅延ロード。
-      // この play() 呼び出し中にメタデータが届いたかをウォッチドッグ判定に使う
-      let metadataArrived = false
+      // 実行中カウンタは例外でも必ず戻す（残ると表示復帰時のkickが無効化される）。
+      // 進行中の再接続に error イベント由来の次試行が重なる等で play() は稀に
+      // 並行しうるため、boolean ではなくカウンタで管理する
+      playsInFlight++
       try {
-        const { default: IcecastMetadataPlayer } = await import('icecast-metadata-player')
-        const player = new IcecastMetadataPlayer(station.url_resolved, {
-          onMetadata: (metadata: any) => {
-            // 局切替後に旧プレイヤーの残イベントが届いても無視する
-            // （新しい局のポーリングを誤って止めないため）
-            if (icecastPlayer !== player) return
-            if (metadata?.StreamTitle) {
-              metadataArrived = true
-              this.nowPlaying = metadata.StreamTitle
-              // メタデータ経路が生きていると分かったのでフォールバックは不要
-              this.stopMetadataPolling()
-              this.syncMediaSession()
+        // ライブストリームは pause で接続が切れる（サーバ側 Connection: close）ため、
+        // 同一局の再開でも常に接続を張り直す。分岐をなくして状態の食い違いも防ぐ。
+        const isNewStation = this.currentStation?.stationuuid !== station.stationuuid
+        this.currentStation = station
+        if (isNewStation) this.nowPlaying = ''
+        this.stopMetadataPolling()
+        // 旧ストリームのストール監視が後段のasync初期化中に誤発火し、
+        // 新しい局への再接続を予約してしまわないよう先に止める（後で張り直す）
+        this.stopStallWatchdog()
+
+        // 手動再生では再接続の試行回数をリセットする（自動再接続からの呼び出しでは維持）
+        if (!opts?.reconnect) {
+          reconnectAttempt = 0
+          this.cancelReconnect()
+          this.lastErrorCode = null
+        }
+        this.setStreamStatus(opts?.reconnect ? 'reconnecting' : 'playing')
+        this.attachWatchdog()
+
+        if (icecastPlayer) {
+          icecastPlayer.stop()
+          icecastPlayer = null
+        }
+
+        // 1. ネイティブ Audio で即座に再生
+        if (nativeAudio) {
+          // 同一URLをsrcに再代入しても、停止中に死んだ接続やリダイレクト解決結果
+          // などの古いリソース状態が要素内に残り、再開が失敗し続けることがある
+          // （「別の局に切り替えて戻すと直る」= リソースの強制入れ替えと同じ効果を
+          // 1回のplay()内で再現するため、一旦srcを外してload()で確実に破棄する）
+          nativeAudio.pause()
+          nativeAudio.removeAttribute('src')
+          nativeAudio.load()
+          nativeAudio.src = station.url_resolved
+          nativeAudio.load()
+          nativeAudio.volume = this.volume
+          // 前ストリームの再生位置を基準に残すと、位置リセットのイベントが
+          // 発火しない環境で新ストリームの前進を検知できなくなるため初期化する
+          lastMediaTime = -1
+          nativeAudio.play().catch(e => console.error('Native playback error:', e))
+        }
+
+        // 2. IcecastMetadataPlayer でメタデータ取得
+        // tauri:// プロトコルでは Worker が使えないため動的インポートで遅延ロード。
+        // この play() 呼び出し中にメタデータが届いたかをウォッチドッグ判定に使う
+        let metadataArrived = false
+        try {
+          const { default: IcecastMetadataPlayer } = await import('icecast-metadata-player')
+          const player = new IcecastMetadataPlayer(station.url_resolved, {
+            onMetadata: (metadata: any) => {
+              // 局切替後に旧プレイヤーの残イベントが届いても無視する
+              // （新しい局のポーリングを誤って止めないため）
+              if (icecastPlayer !== player) return
+              if (metadata?.StreamTitle) {
+                metadataArrived = true
+                this.nowPlaying = metadata.StreamTitle
+                // メタデータ経路が生きていると分かったのでフォールバックは不要
+                this.stopMetadataPolling()
+                this.syncMediaSession()
+              }
             }
-          }
-        })
-        icecastPlayer = player
-        player.audioElement.muted = true
-        player.play().catch((e: any) => {
-          console.warn('IcecastMetadataPlayer failed:', e)
-          // フォールバック: Rust経由で定期的に曲名を取得して更新
-          if (icecastPlayer === player) this.startMetadataPolling(station.url_resolved)
-        })
-        // play() が成功したままメタデータが届かないケース（CORS遮断など）の見張り
-        setTimeout(() => {
-          if (
-            icecastPlayer === player &&
-            this.isPlaying &&
-            !metadataArrived &&
-            metadataTimer === null
-          ) {
-            console.info('[icy] no metadata within watchdog, starting fallback polling')
-            this.startMetadataPolling(station.url_resolved)
-          }
-        }, METADATA_WATCHDOG_MS)
-      } catch (e) {
-        console.warn('IcecastMetadataPlayer import failed:', e)
-        this.startMetadataPolling(station.url_resolved)
-      }
+          })
+          icecastPlayer = player
+          player.audioElement.muted = true
+          player.play().catch((e: any) => {
+            console.warn('IcecastMetadataPlayer failed:', e)
+            // フォールバック: Rust経由で定期的に曲名を取得して更新
+            if (icecastPlayer === player) this.startMetadataPolling(station.url_resolved)
+          })
+          // play() が成功したままメタデータが届かないケース（CORS遮断など）の見張り
+          setTimeout(() => {
+            if (
+              icecastPlayer === player &&
+              this.isPlaying &&
+              !metadataArrived &&
+              metadataTimer === null
+            ) {
+              console.info('[icy] no metadata within watchdog, starting fallback polling')
+              this.startMetadataPolling(station.url_resolved)
+            }
+          }, METADATA_WATCHDOG_MS)
+        } catch (e) {
+          console.warn('IcecastMetadataPlayer import failed:', e)
+          this.startMetadataPolling(station.url_resolved)
+        }
 
-      this.isPlaying = true
-      this.startStallWatchdog()
-      this.syncMediaSession()
+        this.isPlaying = true
+        this.startStallWatchdog()
+        this.syncMediaSession()
 
-      // ロック画面/コントロールセンターの再生・一時停止ボタンをアプリに接続
-      if ('mediaSession' in navigator) {
-        navigator.mediaSession.setActionHandler('play', () => {
-          if (this.currentStation) this.play(this.currentStation)
-        })
-        navigator.mediaSession.setActionHandler('pause', () => this.pause())
+        // ロック画面/コントロールセンターの再生・一時停止ボタンをアプリに接続
+        if ('mediaSession' in navigator) {
+          navigator.mediaSession.setActionHandler('play', () => {
+            if (this.currentStation) this.play(this.currentStation)
+          })
+          navigator.mediaSession.setActionHandler('pause', () => this.pause())
+        }
+      } finally {
+        playsInFlight--
       }
     },
 
     pause() {
       this.isPlaying = false
-      this.streamStatus = 'idle'
+      this.setStreamStatus('idle')
       this.cancelReconnect()
       this.stopStallWatchdog()
       if (nativeAudio) nativeAudio.pause()
@@ -228,6 +287,29 @@ export const usePlayerStore = defineStore('player', {
         this.onStreamBroken('error')
       })
       nativeAudio.addEventListener('ended', () => this.onStreamBroken('ended'))
+      // サスペンド復帰(ウィンドウ再表示)を保険のトリガーにする。凍結中に
+      // タイマーまで失われていた場合はユーザー操作由来のこのイベントが最後の砦
+      document.addEventListener('visibilitychange', () => {
+        if (document.visibilityState === 'visible') this.kickReconnectIfStalled()
+      })
+    },
+
+    // streamStatus の一元更新点。'reconnecting' の間だけ無音キープアライブを
+    // 鳴らし、非表示ウィンドウでもページがサスペンドされないようにする
+    setStreamStatus(status: StreamStatus) {
+      this.streamStatus = status
+      if (status === 'reconnecting') startKeepAlive()
+      else stopKeepAlive()
+    },
+
+    // サスペンド復帰時の保険: 'reconnecting' のまま全タイマーが止まっていたら
+    // （凍結の後遺症や play() 中断で起きうる）即時に再接続を張り直す。
+    // stallTimer が生きていれば状態機械は自走できるのでそちらに任せる
+    kickReconnectIfStalled() {
+      if (this.streamStatus !== 'reconnecting' || !this.isPlaying || !this.currentStation) return
+      if (reconnectTimer !== null || stallTimer !== null || playsInFlight > 0) return
+      console.warn('[reconnect] state machine stalled, kicking on resume')
+      this.play(this.currentStation, { reconnect: true })
     },
 
     onStreamProgress() {
@@ -247,7 +329,7 @@ export const usePlayerStore = defineStore('player', {
       if (this.currentStation) markStationPlayable(this.currentStation)
       if (this.streamStatus === 'reconnecting') {
         console.info('[reconnect] stream recovered')
-        this.streamStatus = 'playing'
+        this.setStreamStatus('playing')
         reconnectAttempt = 0
         // バックオフ待機中に自然復旧した場合、予約済みの再接続が
         // 健全な再生を張り直してしまわないよう破棄する
@@ -269,12 +351,12 @@ export const usePlayerStore = defineStore('player', {
         console.warn('[reconnect] giving up after max attempts')
         // pause() が streamStatus を 'idle' に戻すため、'error' は後から設定する
         this.pause()
-        this.streamStatus = 'error'
+        this.setStreamStatus('error')
         return
       }
       const delay = RECONNECT_DELAYS_MS[reconnectAttempt]
       reconnectAttempt++
-      this.streamStatus = 'reconnecting'
+      this.setStreamStatus('reconnecting')
       console.info(`[reconnect] attempt ${reconnectAttempt}/${RECONNECT_DELAYS_MS.length} in ${delay}ms`)
       reconnectTimer = setTimeout(() => {
         reconnectTimer = null
