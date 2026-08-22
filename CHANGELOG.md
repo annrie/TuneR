@@ -1,6 +1,18 @@
 # Changelog
 
 
+## v0.3.1
+
+[compare changes](https://github.com/annrie/TuneR/compare/v0.3.0...v0.3.1)
+
+### 🐛 バグ修正
+
+- **player:** 🐛 ミニ窓運用中の再接続凍結を無音キープアライブ+復帰時キックで解消 ([a431d0b](https://github.com/annrie/TuneR/commit/a431d0b))
+
+### ❤️ Contributors
+
+- Annrie ([@annrie](https://github.com/annrie))
+
 ## v0.3.0
 
 [compare changes](https://github.com/annrie/TuneR/compare/v0.2.1...v0.3.0)
