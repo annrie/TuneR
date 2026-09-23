@@ -62,7 +62,7 @@ targets:
           NSAllowsArbitraryLoads: true
         # バックグラウンド再生
         UIBackgroundModes: [audio]
-        CFBundleVersion: "0.1.0"
+        CFBundleVersion: "0.3.1"
     entitlements:
       path: tuner_iOS/tuner_iOS.entitlements
     scheme:
