@@ -32,7 +32,8 @@
       "icons/icon.ico"
     ],
     "macOS": {
-      "infoPlist": "Info.plist"
+      "infoPlist": "Info.plist",
+      "signingIdentity": "-"
     },
     "iOS": {
       "developmentTeam": "HZTPA767R3"
