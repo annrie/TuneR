@@ -55,14 +55,14 @@ targets:
           - UIInterfaceOrientationPortraitUpsideDown
           - UIInterfaceOrientationLandscapeLeft
           - UIInterfaceOrientationLandscapeRight
-        CFBundleShortVersionString: 0.3.1
+        CFBundleShortVersionString: 0.3.2
         # 非HTTPSのラジオ局ストリームを再生するため(Xcode GUIで追加されて
         # いたものをproject.ymlに恒久化。xcodegen再生成で消えるのを防ぐ)
         NSAppTransportSecurity:
           NSAllowsArbitraryLoads: true
         # バックグラウンド再生
         UIBackgroundModes: [audio]
-        CFBundleVersion: "0.3.1"
+        CFBundleVersion: "0.3.2"
     entitlements:
       path: tuner_iOS/tuner_iOS.entitlements
     scheme:

@@ -1,6 +1,35 @@
 # Changelog
 
 
+## v0.3.2
+
+[compare changes](https://github.com/annrie/TuneR/compare/v0.3.1...v0.3.2)
+
+### 🐛 バグ修正
+
+- Roll back tagging failures and accept CRLF lockfiles ([975624c](https://github.com/annrie/TuneR/commit/975624c))
+
+### 📖 ドキュメント
+
+- **ios:** 📝 プラットフォーム消失によるビルド失敗と再署名の待機知見を追記 ([d247e3c](https://github.com/annrie/TuneR/commit/d247e3c))
+
+### 📦 ビルド
+
+- Add release script that syncs every version field ([b731041](https://github.com/annrie/TuneR/commit/b731041))
+- Allow extra version fields with an expected match count ([f011557](https://github.com/annrie/TuneR/commit/f011557))
+- **deps:** ⬆️ tauri 2.11.6(セキュリティ修正)・vite 8.3.1・vue 3.5.43 ほか minor/patch 一括更新 / Bump tauri to 2.11.6 (security fix), vite, vue and other minor/patch deps ([96de41c](https://github.com/annrie/TuneR/commit/96de41c))
+
+### 🧹 ビルドプロセスまたは補助ツールの変更
+
+- **ios:** 🔧 gen/appleのInfo.plist版数を0.3.1へ同期 ([b18c6c4](https://github.com/annrie/TuneR/commit/b18c6c4))
+- Align Cargo.toml version with app version ([cfd797b](https://github.com/annrie/TuneR/commit/cfd797b))
+- **ios:** Align project.yml CFBundleVersion with app version ([11125de](https://github.com/annrie/TuneR/commit/11125de))
+- 🔧 Codex アプリのプロジェクト設定を追跡 / Track Codex app project settings (.codex) ([4ced4f0](https://github.com/annrie/TuneR/commit/4ced4f0))
+
+### ❤️ Contributors
+
+- Annrie ([@annrie](https://github.com/annrie))
+
 ## v0.3.1
 
 [compare changes](https://github.com/annrie/TuneR/compare/v0.3.0...v0.3.1)

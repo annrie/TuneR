@@ -1,6 +1,6 @@
 [package]
 name = "tuner"
-version = "0.3.1"
+version = "0.3.2"
 description = "TuneR - Internet Radio App"
 authors = ["annrie"]
 edition = "2021"
