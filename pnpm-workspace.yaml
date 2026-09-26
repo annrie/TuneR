@@ -4,3 +4,8 @@ minimumReleaseAgeExclude:
   # sxzz(unpluginコア)によるdebugのESMフォーク。unplugin-icons 23 /
   # unplugin-vue-components 32の依存。2.1.4のみ公開24h未満のため個別許可
   - obug@2.1.4
+  - '@csstools/css-calc@3.4.1'
+  - '@csstools/css-parser-algorithms@4.0.1'
+  - '@csstools/css-tokenizer@4.0.2'
+  - '@csstools/media-query-list-parser@5.0.1'
+  - '@csstools/postcss-media-minmax@3.0.6'
