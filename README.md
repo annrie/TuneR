@@ -37,6 +37,10 @@
   <a href="#english">English</a> | <a href="#日本語">日本語</a>
 </p>
 
+<p align="center">
+  <img src="docs/images/main.png" alt="TuneR main screen" width="760" />
+</p>
+
 ---
 
 ## English
