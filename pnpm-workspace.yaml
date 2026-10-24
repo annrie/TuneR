@@ -9,3 +9,14 @@ minimumReleaseAgeExclude:
   - '@csstools/css-tokenizer@4.0.2'
   - '@csstools/media-query-list-parser@5.0.1'
   - '@csstools/postcss-media-minmax@3.0.6'
+
+# セキュリティ: 同一メジャー内のパッチ更新で解決するものだけ、^修正版 で指定する。
+# source-map-js: 1.2.2 で GHSA-68fv-2mgg-jv7q(インデックス付き source map によるイベントループ DoS、High)に対応。
+# vue-i18n → @intlify/message-compiler と postcss が牽引する推移的依存。
+# 2026-10-24 追加。Snyk の通知にはなく、pnpm audit で見つかった。
+overrides:
+  source-map-js@<1.2.2: ^1.2.2
+
+# --- 以下は override しない(上流待ち)。2026-10-24 時点の Snyk 指摘 ---
+# 修正版が存在しない(npm の最新が現行版):
+#   picomatch 4.0.7(SNYK-JS-PICOMATCH-21248802、ReDoS。全バージョンが対象。ビルド時のグロブ展開で、パターンは開発者が書いたものだけ)
