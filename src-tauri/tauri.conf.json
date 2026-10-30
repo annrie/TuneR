@@ -36,7 +36,8 @@
       "signingIdentity": "-"
     },
     "iOS": {
-      "developmentTeam": "HZTPA767R3"
+      "developmentTeam": "HZTPA767R3",
+      "minimumSystemVersion": "15.0"
     }
   }
 }
