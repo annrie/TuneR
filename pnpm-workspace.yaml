@@ -9,6 +9,10 @@ minimumReleaseAgeExclude:
   - '@csstools/css-tokenizer@4.0.2'
   - '@csstools/media-query-list-parser@5.0.1'
   - '@csstools/postcss-media-minmax@3.0.6'
+  # vue-tsc 3.3.14 と依存先。2026-10-29 公開で24h未満。vuejs/language-tools の
+  # GitHub Actions による provenance 付き公開を確認して個別許可(2026-10-30)
+  - '@vue/language-core@3.3.14'
+  - vue-tsc@3.3.14
 
 # セキュリティ: 同一メジャー内のパッチ更新で解決するものだけ、^修正版 で指定する。
 # source-map-js: 1.2.2 で GHSA-68fv-2mgg-jv7q(インデックス付き source map によるイベントループ DoS、High)に対応。
