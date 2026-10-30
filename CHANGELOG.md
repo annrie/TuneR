@@ -1,6 +1,28 @@
 # Changelog
 
 
+## v0.3.3
+
+[compare changes](https://github.com/annrie/TuneR/compare/v0.3.2...v0.3.3)
+
+### 🐛 バグ修正
+
+- 🔏 macOSビルドをadhoc署名するよう設定 / Sign macOS builds with adhoc identity ([222148c](https://github.com/annrie/TuneR/commit/222148c))
+- 🐛 iOSアプリアイコンをTauriデフォルトからラジオアイコンへ同期 / Sync iOS app icon from Tauri default to the radio icon ([6425767](https://github.com/annrie/TuneR/commit/6425767))
+
+### 📖 ドキュメント
+
+- 📸 READMEにメイン画面のスクリーンショットを追加 / Add main screen screenshot to README ([5966283](https://github.com/annrie/TuneR/commit/5966283))
+
+### 📦 ビルド
+
+- **deps:** ⬆️ vite 8.3.5 ほかで Snyk の High を解消 / Bump vite to 8.3.5 and others to clear Snyk High issues ([0f62c74](https://github.com/annrie/TuneR/commit/0f62c74))
+- **deps:** ⬆️ tauri 2.12.5(セキュリティ修正)・vue 3.5.44 ほか minor/patch 一括更新 / Bump tauri to 2.12.5 (security fix), vue and other minor/patch deps ([82181fa](https://github.com/annrie/TuneR/commit/82181fa))
+
+### ❤️ Contributors
+
+- Annrie ([@annrie](https://github.com/annrie))
+
 ## v0.3.2
 
 [compare changes](https://github.com/annrie/TuneR/compare/v0.3.1...v0.3.2)
