@@ -1,6 +1,20 @@
 # Changelog
 
 
+## v0.3.4
+
+[compare changes](https://github.com/annrie/TuneR/compare/v0.3.3...v0.3.4)
+
+### 📦 ビルド
+
+- **deps:** 🔧 iOS・mobile の ACL スキーマを tauri 2.12.5 に合わせて再生成 / Regenerate iOS and mobile ACL schemas for tauri 2.12.5 ([ef0eeba](https://github.com/annrie/TuneR/commit/ef0eeba))
+- **ios:** 📱 iOS の最小 OS を 14.0 から 15.0 に上げる / Raise iOS minimum deployment target from 14.0 to 15.0 ([9c03804](https://github.com/annrie/TuneR/commit/9c03804))
+- **ios:** 🔏 実機用 IPA の再署名スクリプトを追加 / Add re-signing script for on-device IPAs ([b1e0fc1](https://github.com/annrie/TuneR/commit/b1e0fc1))
+
+### ❤️ Contributors
+
+- Annrie ([@annrie](https://github.com/annrie))
+
 ## v0.3.3
 
 [compare changes](https://github.com/annrie/TuneR/compare/v0.3.2...v0.3.3)
